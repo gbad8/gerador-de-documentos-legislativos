@@ -1,0 +1,62 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[brazil]{babel}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage[scaled=0.9]{helvet} % Simula Arial Narrow
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{setspace}
+\usepackage{parskip}
+
+\onehalfspacing
+
+% --- Cabeçalho e rodapé ---
+\pagestyle{fancy}
+\fancyhf{}
+\setlength{\headsep}{4cm}
+
+% Cabeçalho centralizado com brasão + texto institucional
+\chead{
+  \begin{minipage}[c]{0.9\textwidth}
+    \centering
+    \includegraphics[width=1.8cm]{brasao.png} \\[0.5em]
+    \textbf{\footnotesize ESTADO DO MARANHÃO} \\[-0.2em]
+    \textbf{\footnotesize PODER LEGISLATIVO} \\[-0.2em]
+    \textbf{\footnotesize CÂMARA MUNICIPAL DE VILA NOVA DOS MARTÍRIOS}
+    \vspace{1em}
+  \end{minipage}
+}
+
+% Rodapé com número da página
+\cfoot{\thepage}
+
+\begin{document}
+
+\vspace{3.5cm}
+
+\begin{flushright}
+Vila Nova dos Martírios, {{ data }}.
+\end{flushright}
+
+\vspace{1.5cm}
+
+\textbf{Ofício n\textsuperscript{o} {{ numero }}/{{ ano }}}
+
+\vspace{1.5em}
+
+Ilustríssimo(a) Senhor(a) {{ destinatario }},
+
+\vspace{1em}
+
+Venho por meio deste informar que {{ mensagem }}.
+
+\vspace{2.5em}
+
+Atenciosamente,
+
+\vspace{3em}
+
+{{ remetente }}
+
+\end{document}
