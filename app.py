@@ -92,11 +92,9 @@ def oficio_padrao():
                 f.write(conteudo)
 
             # Verificação de marcadores não substituídos
-            # Isso é importante para debug, mas pode ser removido em produção
             faltando = re.findall(r'{{.*?}}', conteudo)
             if faltando:
                 # Pode levantar um erro ou apenas logar
-                # raise ValueError(f"Marcadores não substituídos encontrados: {faltando}")
                 print(f"ATENÇÃO: Marcadores não substituídos encontrados: {faltando}")
 
             # Compila para PDF
