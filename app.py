@@ -125,5 +125,133 @@ def oficio_padrao():
     else:
         return render_template('form.html')
 
+@app.route('/indicacao', methods=['GET', 'POST'])
+def indicacao():
+    if request.method == 'POST':
+        data_str = request.form.get('data')
+        data_obj = datetime.strptime(data_str, '%Y-%m-%d')
+        
+        is_conjunta = 'conjunta_check' in request.form
+        vereador_final = ""
+        vereador_nome = ""
+        titulo_vereador = ""
+        
+        if is_conjunta:
+            autores_selecionados = request.form.getlist('autores_selecionados[]')
+            if autores_selecionados:
+                if len(autores_selecionados) > 1:
+                    vereador_nome = ", ".join(autores_selecionados[:-1]) + " e " + autores_selecionados[-1]
+                else:
+                    vereador_nome = autores_selecionados[0]
+            else:
+                vereador_nome = "Nenhum autor selecionado"
+            if len(autores_selecionados) > 1:
+                vereador_final = "dos(as) Exmos(as). Senhores(as) Vereadores(as) " + vereador_nome
+                titulo_vereador = "Vereadores(as)"
+            elif len(autores_selecionados) == 1:
+                vereador_final = "do(a) Exmo(a). Senhor(a) Vereador(a) " + vereador_nome
+                # Determinar gênero do único autor
+                if autores_selecionados[0] in ["Alione Farias de Almeida", "Maria José Ferreira de Sousa"]:
+                    titulo_vereador = "Vereadora"
+                else:
+                    titulo_vereador = "Vereador"
+            else:
+                vereador_final = "Nenhum autor selecionado"
+                titulo_vereador = "Vereador"
+        else:
+            vereador_nome = request.form.get('vereador')
+            if vereador_nome == "Jorge Vieira dos Santos Filho":
+                vereador_final = "do Exmo. Senhor Prefeito " + vereador_nome
+                titulo_vereador = "Prefeito"
+            elif vereador_nome == "Alione Farias de Almeida" or vereador_nome == "Maria José Ferreira de Sousa":
+                vereador_final = "da Exma. Senhora Vereadora " + vereador_nome
+                titulo_vereador = "Vereadora"
+            elif vereador_nome:
+                vereador_final = "do Exmo. Senhor Vereador " + vereador_nome
+                titulo_vereador = "Vereador"
+            else:
+                vereador_final = "Vereador Não Informado "
+                vereador_nome = "Vereador Não Informado "
+                titulo_vereador = "Vereador"
+        
+        assinaturas = ""
+        if is_conjunta:
+            autores_selecionados = request.form.getlist('autores_selecionados[]')
+            total = len(autores_selecionados)
+            for idx, nome in enumerate(autores_selecionados):
+                if nome in ["Alione Farias de Almeida", "Maria José Ferreira de Sousa"]:
+                    titulo = "Vereadora"
+                else:
+                    titulo = "Vereador"
+                assinaturas += (
+                    "\\needspace{1.3cm}\n"
+                    "\\begin{minipage}{\\textwidth}\n"
+                    "\\centering\n"
+                    "\\rule{8cm}{0.4pt} \\\\[1ex]\n"
+                    f"\\textbf{{ {nome} }} \\\\[0.5ex]\n"
+                    f"\\textit{{ {titulo} }}\n"
+                    "\\end{minipage}\n"
+                )
+                # Adiciona espaçamento entre assinaturas, exceto após a última
+                if idx < total - 1:
+                    assinaturas += "\\vspace{1.5cm}\n"
+        else:
+            assinaturas = (
+                "\\needspace{1.3cm}\n"
+                "\\begin{minipage}{\\textwidth}\n"
+                "\\centering\n"
+                "\\rule{8cm}{0.4pt} \\\\[1ex]\n"
+                f"\\textbf{{ {vereador_nome} }} \\\\[0.5ex]\n"
+                f"\\textit{{ {titulo_vereador} }}\n"
+                "\\end{minipage}\n"
+            )
+        dados = {
+            'numero': request.form['numero'],
+            'ano': str(data_obj.year),
+            'data': data_obj.strftime('%d de %B de %Y'),
+            'assunto': request.form['assunto'],
+            'solicitacao': request.form['solicitacao'],
+            'justificativa': request.form['justificativa'],
+            'vereador': vereador_final,
+            'vereador_nome': vereador_nome,
+            'titulo_vereador': titulo_vereador,
+            'assinaturas': assinaturas,
+        }
+
+        # Lê o modelo de indicação
+        with open('indicacao.tex', 'r', encoding='utf-8') as f:
+            conteudo = f.read()
+
+        # Substitui os marcadores
+        for chave, valor in dados.items():
+            conteudo = conteudo.replace(f'{{{{{chave}}}}}', valor)
+
+        # Verificação de marcadores não substituídos
+        faltando = re.findall(r'{{.*?}}', conteudo)
+        if faltando:
+            print(f"ATENÇÃO: Marcadores não substituídos encontrados: {faltando}")
+
+        # Cria um diretório temporário para gerar os arquivos
+        with tempfile.TemporaryDirectory() as tmpdir:
+            caminho_tex = os.path.join(tmpdir, 'documento.tex')
+            with open(caminho_tex, 'w', encoding='utf-8') as f:
+                f.write(conteudo)
+            try:
+                result = subprocess.run(['pdflatex', '-interaction=nonstopmode', '-output-directory', tmpdir, caminho_tex], capture_output=True, encoding='latin1', text=True, check=True)
+                print("STDOUT:", result.stdout)
+                print("STDERR:", result.stderr)
+            except subprocess.CalledProcessError as e:
+                print(f"Erro na compilação do LaTeX: {e}")
+                print("Output LaTeX (STDOUT):", e.stdout)
+                print("Output LaTeX (STDERR):", e.stderr)
+                return f"Erro ao gerar PDF. Verifique o log do servidor para detalhes. LaTeX Erro: {e.stderr}", 500
+            caminho_pdf = os.path.join(tmpdir, 'documento.pdf')
+            nome_arquivo = f"Indicacao_{dados['numero']}_{dados['ano']}.pdf"
+            caminho_final = os.path.join(tmpdir, nome_arquivo)
+            shutil.copy(caminho_pdf, caminho_final)
+            return send_file(caminho_final, as_attachment=True)
+    else:
+        return render_template('form_indicacao.html')
+
 if __name__ == '__main__':
     app.run(debug=True)

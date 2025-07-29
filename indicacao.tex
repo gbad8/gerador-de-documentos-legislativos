@@ -10,6 +10,7 @@
 \usepackage{graphicx} %pacote para insercao de imagens
 \usepackage[hidelinks]{hyperref} %pacote para insercao de links
 \usepackage{mfirstuc} %capitaliza primeira letra da frase
+\usepackage{needspace}
 \setlength{\parindent}{1,5cm} %recuo de paragrado
 \setlength{\parskip}{0pt} %distancia entre paragrafos
 \usepackage{geometry}
@@ -93,28 +94,26 @@ Vila Nova dos Martírios, {{data}}. %data inserida pelo user
 %solicitação
 \vspace{0.3cm}
 \begin{justify}
-	\MakeUppercase{\textbf{SOLICITAÇÃO: {{solicitação}} }}
+	\MakeUppercase{\textbf{SOLICITAÇÃO: {{solicitacao}} }}
 \end{justify}
 
 % justificativa
 \vspace{0.3cm}
 \begin{justify}
-	\textbf{JUSTIFICATIVA:} \capitalisewords{ {{justificativa}} }
+	\textbf{JUSTIFICATIVA:} {{justificativa}} 
 \end{justify}
 
 %local e data
 \vspace{0.3cm}
 \begin{justify}
-		Sala das Sessões da Câmara Municipal de Vereadores de Vila Nova dos Martírios - MA Plenário Aulindo Batista da Cruz. {{data}}
+		Sala das Sessões da Câmara Municipal de Vereadores de Vila Nova dos Martírios - MA Plenário Aulindo Batista da Cruz, {{data}}.
 \end{justify}
 
 %assinaturas
 \vspace{1.3cm}
 
 \begin{center}
-\rule{8cm}{0.4pt} \\[1ex]
-\textbf{ {{vereador}} } \\[0.5ex]
-\textit{ {{vereador-autor}} }
+{{assinaturas}}
 \end{center}
 
 \end{document}
