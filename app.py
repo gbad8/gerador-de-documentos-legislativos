@@ -4,7 +4,7 @@
 # Para visualizar uma cópia desta licença, visite http://creativecommons.org/licenses/by-sa/4.0/
 # ou envie uma carta para Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request, redirect, url_for, session, flash, send_file
 from datetime import datetime
 import locale
 import subprocess
@@ -12,15 +12,45 @@ import tempfile
 import shutil
 import os
 import re
+from functools import wraps
 
 app = Flask(__name__)
+app.secret_key = 'sua_chave_secreta_aqui'  # Necessário para sessões
 locale.setlocale(locale.LC_TIME, 'pt_BR.utf8')
 
 @app.route('/')
 def index():
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
     return render_template('index.html')
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        if username == 'admin' and password == 'admin':
+            session['logged_in'] = True
+            return redirect(url_for('index'))
+        else:
+            flash('Usuário ou senha incorretos!')
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    return redirect(url_for('login'))
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('logged_in'):
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 @app.route('/oficio-padrao', methods=['GET', 'POST'])
+@login_required
 def oficio_padrao():
     if request.method == 'POST':
         data_str = request.form.get('data')
@@ -126,6 +156,7 @@ def oficio_padrao():
         return render_template('form.html')
 
 @app.route('/indicacao', methods=['GET', 'POST'])
+@login_required
 def indicacao():
     if request.method == 'POST':
         data_str = request.form.get('data')
@@ -184,7 +215,7 @@ def indicacao():
                 else:
                     titulo = "Vereador"
                 assinaturas += (
-                    "\\needspace{1.3cm}\n"
+                    "\\assinaturaespaco\n"
                     "\\begin{minipage}{\\textwidth}\n"
                     "\\centering\n"
                     "\\rule{8cm}{0.4pt} \\\\[1ex]\n"
@@ -192,12 +223,11 @@ def indicacao():
                     f"\\textit{{ {titulo} }}\n"
                     "\\end{minipage}\n"
                 )
-                # Adiciona espaçamento entre assinaturas, exceto após a última
                 if idx < total - 1:
                     assinaturas += "\\vspace{1.5cm}\n"
         else:
             assinaturas = (
-                "\\needspace{1.3cm}\n"
+                "\\assinaturaespaco\n"
                 "\\begin{minipage}{\\textwidth}\n"
                 "\\centering\n"
                 "\\rule{8cm}{0.4pt} \\\\[1ex]\n"

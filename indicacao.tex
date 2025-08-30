@@ -11,6 +11,16 @@
 \usepackage[hidelinks]{hyperref} %pacote para insercao de links
 \usepackage{mfirstuc} %capitaliza primeira letra da frase
 \usepackage{needspace}
+\usepackage{everypage}
+\newcommand{\assinaturaespaco}{%
+  \ifnum\value{page}=1
+    % Não adiciona espaço extra na primeira página
+  \else
+    \ifdim\pagetotal=0pt
+      \vspace*{2cm}
+    \fi
+  \fi
+}
 \setlength{\parindent}{1,5cm} %recuo de paragrado
 \setlength{\parskip}{0pt} %distancia entre paragrafos
 \usepackage{geometry}

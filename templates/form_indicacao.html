@@ -43,7 +43,7 @@
 </head>
 
 <!-- corpo -->
-<body  class="--bs-body-color-rgb">
+<body class="bg-body-secondary d-flex flex-column min-vh-100">
 
 <!-- barra de navegação 1 -->
 <nav class="navbar fixed-top navbar-expand-lg bg-body-secondary" data-bs-theme="dark">
@@ -61,6 +61,21 @@
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">Configurações</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+              <path d="M11 10a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
+              <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0 0 14A7 7 0 0 0 8 1zM4.285 12.433A5.978 5.978 0 0 1 8 11c1.306 0 2.518.418 3.715 1.433A6.978 6.978 0 0 1 8 15a6.978 6.978 0 0 1-3.715-2.567z"/>
+            </svg>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item" href="#">Configurações</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{{ url_for('logout') }}">Sair</a></li>
+          </ul>
         </li>
       </ul>
     </div>
@@ -175,7 +190,7 @@
 </main>
 
 <!-- rodapé --> 
-<footer id="footer" class="bg-body-secondary text-secondary py-4 mt-5" data-bs-theme="dark">
+<footer id="footer" class="bg-body-secondary text-secondary py-4 mt-auto" data-bs-theme="dark">
     <div class="container">
         <div class="row">
             <!-- coluna 1-->
