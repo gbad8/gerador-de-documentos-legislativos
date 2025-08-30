@@ -50,7 +50,7 @@ def cabecalho(canvas, doc):
     y = 753
 
     # Logo
-    canvas.drawImage("logo.png", x, y, width=largura_imagem, height=altura_imagem, preserveAspectRatio=True, mask='auto') # logo da casa legislativa
+    canvas.drawImage("static/img/logo_cc.png", x, y, width=largura_imagem, height=altura_imagem, preserveAspectRatio=True, mask='auto') # logo da casa legislativa
     # Texto 
     canvas.setFont('Times-Bold', 10)
     canvas.drawCentredString(largura_pagina / 2, y - 20, "ESTADO DO MARANHÃO")
@@ -82,10 +82,10 @@ def cabecalho_rodape(canvas, doc):
     rodape(canvas, doc)
 
 # Função reutilizável
-def gerar_indicacao():
+def gerar_indicacao(*args, **kwargs):
 
     # Definição do documento
-    doc = BaseDocTemplate("oficio.pdf", pagesize=A4)
+    doc = BaseDocTemplate("indicacao.pdf", pagesize=A4)
 
     # Área útil do texto
     frame = Frame(85, 80, largura_pagina - 170, altura_pagina - 230, id='normal')
@@ -99,17 +99,17 @@ def gerar_indicacao():
     story =[]
     story.append(Paragraph("<b>Secretaria Legislativa</b>", right_aligned_style)) # Órgão
     story.append(Spacer(1, 1/2 * cm)) # Espaço
-    story.append(Paragraph("<b>Indicação n° 41/2025</b>", normal_justificado)) # Proposição
+    story.append(Paragraph(f"Indicação {dados['numero']}/{dados['ano']}", normal_justificado)) # Proposição
     story.append(Spacer(1, 2/3 * cm)) # Espaço
     story.append(Paragraph("Vila Nova dos Martírios, 27 de agosto de 2025.", right_aligned_style)) # Data
 
     # Autores
     story.append(Spacer(1, cm)) # Espaço
-    story.append(Paragraph("<b>AUTORIA DOS(AS) EXMOS(AS) SENHORES(AS) VEREADORES(AS) ALIONE FARIAS DE ALMEIDA, ELSON GOMES DA SILVA, ISAC SOARES DE ARAÚJO, JOÃO FREDSON ALVES DE CARVALHO, JOSÉ GIVANILDO DE SOUSA MATIAS, JOSEMAR RODRIGUES DA SILVA, MARIA JOSÉ FERREIRA DE SOUSA, MANOEL FERREIRA DA SILVA E RICARDO VIANA MATOS,</b>", normal_justificado))
+    story.append(Paragraph(f"<b> AUTORIA {dados[vereador_nome]}", normal_justificado))
 
     # Assunto
     story.append(Spacer(1, 2/3 * cm)) # Espaço
-    story.append(Paragraph("<b>ASSUNTO: CONSTRUÇÃO DE UMA PRAÇA NO POVOADO PARAÍSO.</b>", normal_justificado))
+    story.append(Paragraph(f"<b>ASSUNTO: {dados[assunto]}</b>", normal_justificado))
 
     # Introdução
     story.append(Spacer(1, 2/3 *cm)) # Espaço
@@ -120,13 +120,11 @@ def gerar_indicacao():
 
     # Solicitação
     story.append(Spacer(1, 2/3 *cm)) # Espaço
-    story.append(Paragraph("<b>SOLICITAÇÃO: QUE A PREFEITURA MUNICIPAL EMPREGUE OS MEIOS NECESSÁRIOS PARA A CONSTRUÇÃO DE UMA PRAÇA NO POVOADO PARAÍSO.</b>", normal_justificado))
+    story.append(Paragraph(f"<b>SOLICITAÇÃO: {dados[solicitacao]}</b>", normal_justificado))
 
     # Justificativa
     story.append(Spacer(1, 2/3 * cm)) # Espaço
-    story.append(Paragraph("""<b>JUSTIFICATIVA</b>: A construção de uma praça no povoado Paraíso é uma necessidade evidente da comunidade, que atualmente carece de um espaço público que promova o convívio social, o lazer e a realização de atividades culturais e recreativas. A implantação desse equipamento proporcionará um ambiente saudável para crianças, jovens, adultos e idosos, favorecendo a integração entre as famílias e o fortalecimento dos laços comunitários. 
-    Além disso, a praça representará um espaço de valorização do povoado, trazendo mais qualidade de vida aos moradores e contribuindo para a inclusão social. Trata-se de uma iniciativa que estimula o bem-estar coletivo, a prática de atividades ao ar livre e a cidadania.
-     Diante disso, os vereadores desta Casa Legislativa apresentam a presente indicação, conf iando que a Prefeitura Municipal envidará os esforços necessários para sua concretização, em benefício de toda a população do povoado Paraíso.""", normal_justificado))
+    story.append(Paragraph(f"""<b>JUSTIFICATIVA: {dados[justificativa]}</b>""", normal_justificado))
 
     # Conclusão
     story.append(Spacer(1, 2/3 * cm)) # Espaço

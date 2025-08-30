@@ -13,6 +13,7 @@ import shutil
 import os
 import re
 from functools import wraps
+from gerador_indicacao import gerar_indicacao
 
 app = Flask(__name__)
 app.secret_key = 'sua_chave_secreta_aqui'  # Necessário para sessões
@@ -248,38 +249,10 @@ def indicacao():
             'assinaturas': assinaturas,
         }
 
-        # Lê o modelo de indicação
-        with open('indicacao.tex', 'r', encoding='utf-8') as f:
-            conteudo = f.read()
-
-        # Substitui os marcadores
-        for chave, valor in dados.items():
-            conteudo = conteudo.replace(f'{{{{{chave}}}}}', valor)
-
-        # Verificação de marcadores não substituídos
-        faltando = re.findall(r'{{.*?}}', conteudo)
-        if faltando:
-            print(f"ATENÇÃO: Marcadores não substituídos encontrados: {faltando}")
-
-        # Cria um diretório temporário para gerar os arquivos
-        with tempfile.TemporaryDirectory() as tmpdir:
-            caminho_tex = os.path.join(tmpdir, 'documento.tex')
-            with open(caminho_tex, 'w', encoding='utf-8') as f:
-                f.write(conteudo)
-            try:
-                result = subprocess.run(['pdflatex', '-interaction=nonstopmode', '-output-directory', tmpdir, caminho_tex], capture_output=True, encoding='latin1', text=True, check=True)
-                print("STDOUT:", result.stdout)
-                print("STDERR:", result.stderr)
-            except subprocess.CalledProcessError as e:
-                print(f"Erro na compilação do LaTeX: {e}")
-                print("Output LaTeX (STDOUT):", e.stdout)
-                print("Output LaTeX (STDERR):", e.stderr)
-                return f"Erro ao gerar PDF. Verifique o log do servidor para detalhes. LaTeX Erro: {e.stderr}", 500
-            caminho_pdf = os.path.join(tmpdir, 'documento.pdf')
-            nome_arquivo = f"Indicacao_{dados['numero']}_{dados['ano']}.pdf"
-            caminho_final = os.path.join(tmpdir, nome_arquivo)
-            shutil.copy(caminho_pdf, caminho_final)
-            return send_file(caminho_final, as_attachment=True)
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
+            gerar_indicacao(dados, tmp.name)
+            return send_file(tmp.name, as_attachment=True, download_name=f"Indicação {dados['numero']}_{dados['ano']}.pdf")
+            
     else:
         return render_template('form_indicacao.html')
 
