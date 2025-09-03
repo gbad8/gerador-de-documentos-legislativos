@@ -50,13 +50,15 @@ def cabecalho(canvas, doc):
     y = 753
 
     # Logo
-    canvas.drawImage("static/img/logo.png", x, y, width=largura_imagem, height=altura_imagem, preserveAspectRatio=True, mask='auto') # logo da casa legislativa
+    canvas.drawImage("static/img/logo.png", x, y, width=largura_imagem, height=altura_imagem, preserveAspectRatio=True, mask='auto')
+
     # Texto 
     canvas.setFont('Times-Bold', 10)
     canvas.drawCentredString(largura_pagina / 2, y - 20, "ESTADO DO MARANHÃO")
     canvas.drawCentredString(largura_pagina / 2, y - 32, "PODER LEGISLATIVO") 
     canvas.drawCentredString(largura_pagina / 2, y - 44, "CÂMARA MUNICIPAL DE VILA NOVA DOS MARTÍRIOS") 
-    # Linha divisóaria
+
+    # Linha divisória
     canvas.setLineWidth(0.5)
     ultima_altura = y - 20 - 32
     canvas.line(90, ultima_altura, largura_pagina - 90, ultima_altura)
@@ -89,7 +91,7 @@ def formatar_nomes(lista_nomes):
         return lista_nomes[0]
     return ", ".join(lista_nomes[:-1]) + " e " + lista_nomes[-1]
 
-# Função reutilizável
+# Função principal para gerar a indicação
 def gerar_indicacao(dados, nome_arquivo):
 
     # Definição do documento
@@ -234,3 +236,5 @@ def gerar_indicacao(dados, nome_arquivo):
         story.append(bloco_assinatura)
 
     doc.build(story)
+
+    ## Soli Deo Gloria ##

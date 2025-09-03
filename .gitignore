@@ -1,0 +1,30 @@
+Ambientes Virtuais
+Ignora a pasta que contém a cópia do Python e das bibliotecas.
+venv/
+*.venv
+env/
+env.bak/
+venv.bak/
+
+Cache e arquivos compilados do Python
+São arquivos temporários que o Python cria para otimizar a execução.
+pycache/
+*.pyc
+*.pyo
+*.pyd
+
+Arquivos de configuração de editores e IDEs
+Configurações específicas do seu computador que não devem ir para o repositório.
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+Arquivos de dependências do Poetry (caso use no futuro)
+poetry.lock
+.pids/
+.pybuild/
+
+Arquivos de sistema operacional
+.DS_Store
+Thumbs.db
