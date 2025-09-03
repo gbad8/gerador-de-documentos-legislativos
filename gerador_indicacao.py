@@ -1,6 +1,6 @@
 # Modulos utilizados
 from reportlab.lib.pagesizes import A4
-from reportlab.platypus import BaseDocTemplate, PageTemplate, Frame, Paragraph, Spacer, Table, TableStyle
+from reportlab.platypus import BaseDocTemplate, PageTemplate, Frame, Paragraph, Spacer, Table, TableStyle, KeepTogether
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_RIGHT, TA_JUSTIFY, TA_CENTER #constante para alinhamento à direita
 from reportlab.lib.units import cm
@@ -21,7 +21,7 @@ normal_justificado = ParagraphStyle( # justificado para o corpo
 normal_centralizado = ParagraphStyle( # centralizado para assinaturas
         "NormalCentralizado",
         parent=styles["Normal"],
-        fontName="Times-Roman",
+                fontName="Times-Roman",
         alignment=TA_CENTER,
         fontSize=12,
         leading = 14
@@ -50,7 +50,7 @@ def cabecalho(canvas, doc):
     y = 753
 
     # Logo
-    canvas.drawImage("static/img/logo_cc.png", x, y, width=largura_imagem, height=altura_imagem, preserveAspectRatio=True, mask='auto') # logo da casa legislativa
+    canvas.drawImage("static/img/logo.png", x, y, width=largura_imagem, height=altura_imagem, preserveAspectRatio=True, mask='auto') # logo da casa legislativa
     # Texto 
     canvas.setFont('Times-Bold', 10)
     canvas.drawCentredString(largura_pagina / 2, y - 20, "ESTADO DO MARANHÃO")
@@ -81,11 +81,19 @@ def cabecalho_rodape(canvas, doc):
     cabecalho(canvas, doc)
     rodape(canvas, doc)
 
+# Função que concatena o nome dos autores
+def formatar_nomes(lista_nomes):
+    if not lista_nomes:
+        return ""
+    if len(lista_nomes) == 1:
+        return lista_nomes[0]
+    return ", ".join(lista_nomes[:-1]) + " e " + lista_nomes[-1]
+
 # Função reutilizável
-def gerar_indicacao(*args, **kwargs):
+def gerar_indicacao(dados, nome_arquivo):
 
     # Definição do documento
-    doc = BaseDocTemplate("indicacao.pdf", pagesize=A4)
+    doc = BaseDocTemplate(nome_arquivo, pagesize=A4)
 
     # Área útil do texto
     frame = Frame(85, 80, largura_pagina - 170, altura_pagina - 230, id='normal')
@@ -99,17 +107,84 @@ def gerar_indicacao(*args, **kwargs):
     story =[]
     story.append(Paragraph("<b>Secretaria Legislativa</b>", right_aligned_style)) # Órgão
     story.append(Spacer(1, 1/2 * cm)) # Espaço
-    story.append(Paragraph(f"Indicação {dados['numero']}/{dados['ano']}", normal_justificado)) # Proposição
+
+    # Conjunta ou não
+    autores = dados.get('autores_selecionados', [])
+    if len(autores) > 1:
+        titulo_proposicao = f"<b>Indicação Conjunta n° {dados['numero']}/{dados['ano']}</b>"
+    else:
+        titulo_proposicao = f"<b>Indicação n° {dados['numero']}/{dados['ano']}</b>"
+
+    story.append(Paragraph(titulo_proposicao, normal_justificado)) # Proposição
     story.append(Spacer(1, 2/3 * cm)) # Espaço
-    story.append(Paragraph("Vila Nova dos Martírios, 27 de agosto de 2025.", right_aligned_style)) # Data
+    story.append(Paragraph(f"Vila Nova dos Martírios, {dados['data']}.", right_aligned_style)) # Data
+
+    # Dicionários de nomes e cargos
+    VEREADORES = {
+    "Josemar Rodrigues da Silva":       {"titulo": "Presidente da Mesa Diretora", "genero": "M"},
+    "José Givanildo de Sousa Matias":   {"titulo": "Vice-Presidente da Mesa Diretora", "genero": "M"},
+    "Ricardo Viana Matos":              {"titulo": "1º Secretário da Mesa Diretora", "genero": "M"},
+    "Maria José Ferreira de Sousa":     {"titulo": "2ª Secretária da Mesa Diretora", "genero": "F"},
+    "Alione Farias de Almeida":         {"titulo": "Vereadora", "genero": "F"},
+    "Elson Gomes da Silva":             {"titulo": "Vereador", "genero": "M"},
+    "Isac Soares de Araújo":            {"titulo": "Vereador", "genero": "M"},
+    "João Fredson Alves de Carvalho":   {"titulo": "Vereador", "genero": "M"},
+    "Manoel Ferreira da Silva":         {"titulo": "Vereador", "genero": "M"}}
 
     # Autores
     story.append(Spacer(1, cm)) # Espaço
-    story.append(Paragraph(f"<b> AUTORIA {dados[vereador_nome]}", normal_justificado))
+    autores = dados.get('autores_selecionados', [])
+    texto_autoria = ""
+
+    # Caso 1: Autoria única
+    if len(autores) <= 1:
+        nome_autor = dados.get('vereador_nome', '')
+        info_autor = VEREADORES.get(nome_autor)
+        texto_autoria = ""
+    
+        if info_autor and info_autor.get("genero") == 'F':
+            texto_autoria = f"AUTORIA DA SENHORA VEREADORA {nome_autor.upper()}"
+        else:
+            texto_autoria = f"AUTORIA DO SENHOR VEREADOR {nome_autor.upper()}"
+        
+        linha_autoria_final = f"<b>{texto_autoria}</b>"
+
+    # Caso 2: Autoria conjunta
+    else:
+        vereadores_homens = []
+        vereadoras_mulheres = []
+
+        # Separa os autores em listas por gênero
+        for nome in autores:
+            info = VEREADORES.get(nome)
+            if info and info.get('genero') == 'F':
+                vereadoras_mulheres.append(nome)
+            else:
+                vereadores_homens.append(nome)
+
+        # Formata as listas de nomes usando a função auxiliar
+        nomes_homens_str = formatar_nomes(vereadores_homens)
+        nomes_mulheres_str = formatar_nomes(vereadoras_mulheres)
+
+        partes_autoria = []
+        # Cria a parte do texto para os homens, se houver algum
+        if nomes_homens_str:
+            partes_autoria.append(f"DOS SENHORES VEREADORES {nomes_homens_str.upper()}")
+    
+        # Cria a parte do texto para as mulheres, se houver alguma
+        if nomes_mulheres_str:
+            partes_autoria.append(f"DAS SENHORAS VEREADORAS {nomes_mulheres_str.upper()}")
+
+        # Junta as partes com " E "
+        texto_final_autoria = " E ".join(partes_autoria)
+        
+        linha_autoria_final = f"<b>AUTORIA {texto_final_autoria}</b>"
+
+    story.append(Paragraph(linha_autoria_final, normal_justificado))
 
     # Assunto
     story.append(Spacer(1, 2/3 * cm)) # Espaço
-    story.append(Paragraph(f"<b>ASSUNTO: {dados[assunto]}</b>", normal_justificado))
+    story.append(Paragraph(f"<b>ASSUNTO: {dados['assunto'].upper()}</b>", normal_justificado))
 
     # Introdução
     story.append(Spacer(1, 2/3 *cm)) # Espaço
@@ -120,64 +195,42 @@ def gerar_indicacao(*args, **kwargs):
 
     # Solicitação
     story.append(Spacer(1, 2/3 *cm)) # Espaço
-    story.append(Paragraph(f"<b>SOLICITAÇÃO: {dados[solicitacao]}</b>", normal_justificado))
+    story.append(Paragraph(f"<b>SOLICITAÇÃO: {dados['solicitacao'].upper()}</b>", normal_justificado))
 
     # Justificativa
     story.append(Spacer(1, 2/3 * cm)) # Espaço
-    story.append(Paragraph(f"""<b>JUSTIFICATIVA: {dados[justificativa]}</b>""", normal_justificado))
+    story.append(Paragraph(f"""<b>JUSTIFICATIVA: {dados['justificativa']}</b>""", normal_justificado))
 
     # Conclusão
     story.append(Spacer(1, 2/3 * cm)) # Espaço
-    story.append(Paragraph("Sala das Sessões da Câmara Municipal de Vereadores de Vila Nova dos Martírios - MA", normal_justificado))
-    story.append(Paragraph("Plenário Aulindo Batista da Cruz, 27 de agosto de 2025.", normal_justificado))
+    story.append(Paragraph(f"Sala das Sessões da Câmara Municipal de Vila Nova dos Martírios - MA. Plenátio Aulindo Batista da Cruz, {dados['data']}.", normal_justificado))
+    story.append(Spacer(1, cm)) # Espaço antes das assinaturas
+    
+    # Testa a quantidade de autores 
+    if not autores:
+        nome_unico = dados.get('vereador_nome')
+        if nome_unico:
+            autores = [nome_unico]
 
-    # Assinaturas
-    # Variáveis gerais
-    largura_linha = 8 * cm
-    drawing_line = Drawing(largura_linha, 1)
-    drawing_line.add(Line(0, 0, largura_linha, 0))
+    # Escolhe as configurações gerais para a assinatura
+    linha_assinatura = Table([['_' * 45]], colWidths=[8*cm])
+    linha_assinatura.setStyle([('ALIGN', (0,0), (-1,-1), 'CENTER'),
+                               ('LEFTPADDING', (0,0), (-1,-1), 0),
+                               ('RIGHTPADDING', (0,0), (-1,-1), 0)])
+    
+    # Gera a assinatura para cada autor selecionado
+    for nome in autores:
+        # Busca o cargo do vereador no dicionário. Se não encontrar, usa "Vereador(a)" como padrão.
+        # Busca as informações do vereador, com um valor padrão caso não encontre
+        info_vereador = VEREADORES.get(nome, {"titulo": "Vereador(a)", "genero": "M"})
+        cargo = info_vereador.get("titulo")
 
-    table_line = Table([[drawing_line]], colWidths=[largura_linha])
-    table_line.hAlign = "CENTER"
-    story.append(Spacer(1, 0.5 * cm)) #Espaço antes de todas as assinaturas
+        bloco_assinatura = KeepTogether([
+            Spacer(1, 1.5 * cm), # Espaço entre as assinaturas
+            linha_assinatura,
+            Paragraph(f"<b>{nome}</b>", normal_centralizado),
+            Paragraph(f"<i>{cargo}</i>", normal_centralizado)
+            ])
+        story.append(bloco_assinatura)
 
-    # Assinatura em si
-    story.append(Spacer(1, 1.5 * cm)) # Espaço
-    story.append(table_line)
-    story.append(Paragraph("<b>Josemar Rodrigues da Silva</b>", normal_centralizado))
-    story.append(Paragraph("<i>Presidente da Mesa Diretora</i>", normal_centralizado))
-    story.append(Spacer(1, 1.5 * cm)) # Espaço
-    story.append(table_line)
-    story.append(Paragraph("<b>José Givanildo de Sousa Matias</b>", normal_centralizado))
-    story.append(Paragraph("<i>Vice-Presidente da Mesa Diretora</i>", normal_centralizado))
-    story.append(Spacer(1, 1.5 * cm)) # Espaço
-    story.append(table_line)
-    story.append(Paragraph("<b>Ricardo Viana Matos</b>", normal_centralizado))
-    story.append(Paragraph("<i>1º Secretário da Mesa Diretora</i>", normal_centralizado))
-    story.append(Spacer(1, 1.5 * cm)) # Espaço
-    story.append(table_line)
-    story.append(Paragraph("<b>Maria José Ferreira de Sousa</b>", normal_centralizado))
-    story.append(Paragraph("<i>2ª Secretária da Mesa Diretora</i>", normal_centralizado))
-    story.append(Spacer(1, 1.5 * cm)) # Espaço
-    story.append(table_line)
-    story.append(Paragraph("<b>Alione Farias de Almeida</b>", normal_centralizado))
-    story.append(Paragraph("<i>Vereadora</i>", normal_centralizado))
-
-    story.append(Spacer(1, 1.5 * cm)) # Espaço
-    story.append(table_line)
-    story.append(Paragraph("<b>Elson Gomes da Silva</b>", normal_centralizado))
-    story.append(Paragraph("<i>Vereador</i>", normal_centralizado))
-
-    story.append(Spacer(1, 1.5 * cm)) # Espaço
-    story.append(table_line)
-    story.append(Paragraph("<b>Isac Soares de Araújo</b>", normal_centralizado))
-    story.append(Paragraph("<i>Vereador</i>", normal_centralizado))
-    story.append(Spacer(1, 1.5 * cm)) # Espaço
-    story.append(table_line)
-    story.append(Paragraph("<b>João Fredson Alves de Carvalho</b>", normal_centralizado))
-    story.append(Paragraph("<i>Vereador</i>", normal_centralizado))
-    story.append(Spacer(1, 1.5 * cm)) # Espaço
-    story.append(table_line)
-    story.append(Paragraph("<b>Manoel Ferreira da Silva</b>", normal_centralizado))
-    story.append(Paragraph("<i>Vereador</i>", normal_centralizado))
     doc.build(story)

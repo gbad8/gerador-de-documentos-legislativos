@@ -164,78 +164,27 @@ def indicacao():
         data_obj = datetime.strptime(data_str, '%Y-%m-%d')
         
         is_conjunta = 'conjunta_check' in request.form
+        autores_selecionados = request.form.getlist('autores_selecionados[]') if is_conjunta else []
+        
         vereador_final = ""
         vereador_nome = ""
-        titulo_vereador = ""
-        
+
         if is_conjunta:
-            autores_selecionados = request.form.getlist('autores_selecionados[]')
-            if autores_selecionados:
-                if len(autores_selecionados) > 1:
-                    vereador_nome = ", ".join(autores_selecionados[:-1]) + " e " + autores_selecionados[-1]
-                else:
-                    vereador_nome = autores_selecionados[0]
-            else:
-                vereador_nome = "Nenhum autor selecionado"
             if len(autores_selecionados) > 1:
+                vereador_nome = ", ".join(autores_selecionados[:-1]) + " e " + autores_selecionados[-1]
                 vereador_final = "dos(as) Exmos(as). Senhores(as) Vereadores(as) " + vereador_nome
-                titulo_vereador = "Vereadores(as)"
             elif len(autores_selecionados) == 1:
+                vereador_nome = autores_selecionados[0]
                 vereador_final = "do(a) Exmo(a). Senhor(a) Vereador(a) " + vereador_nome
-                # Determinar gênero do único autor
-                if autores_selecionados[0] in ["Alione Farias de Almeida", "Maria José Ferreira de Sousa"]:
-                    titulo_vereador = "Vereadora"
-                else:
-                    titulo_vereador = "Vereador"
-            else:
-                vereador_final = "Nenhum autor selecionado"
-                titulo_vereador = "Vereador"
         else:
             vereador_nome = request.form.get('vereador')
             if vereador_nome == "Jorge Vieira dos Santos Filho":
                 vereador_final = "do Exmo. Senhor Prefeito " + vereador_nome
-                titulo_vereador = "Prefeito"
-            elif vereador_nome == "Alione Farias de Almeida" or vereador_nome == "Maria José Ferreira de Sousa":
+            elif vereador_nome in ["Alione Farias de Almeida", "Maria José Ferreira de Sousa"]:
                 vereador_final = "da Exma. Senhora Vereadora " + vereador_nome
-                titulo_vereador = "Vereadora"
-            elif vereador_nome:
-                vereador_final = "do Exmo. Senhor Vereador " + vereador_nome
-                titulo_vereador = "Vereador"
             else:
-                vereador_final = "Vereador Não Informado "
-                vereador_nome = "Vereador Não Informado "
-                titulo_vereador = "Vereador"
+                vereador_final = "do Exmo. Senhor Vereador " + vereador_nome
         
-        assinaturas = ""
-        if is_conjunta:
-            autores_selecionados = request.form.getlist('autores_selecionados[]')
-            total = len(autores_selecionados)
-            for idx, nome in enumerate(autores_selecionados):
-                if nome in ["Alione Farias de Almeida", "Maria José Ferreira de Sousa"]:
-                    titulo = "Vereadora"
-                else:
-                    titulo = "Vereador"
-                assinaturas += (
-                    "\\assinaturaespaco\n"
-                    "\\begin{minipage}{\\textwidth}\n"
-                    "\\centering\n"
-                    "\\rule{8cm}{0.4pt} \\\\[1ex]\n"
-                    f"\\textbf{{ {nome} }} \\\\[0.5ex]\n"
-                    f"\\textit{{ {titulo} }}\n"
-                    "\\end{minipage}\n"
-                )
-                if idx < total - 1:
-                    assinaturas += "\\vspace{1.5cm}\n"
-        else:
-            assinaturas = (
-                "\\assinaturaespaco\n"
-                "\\begin{minipage}{\\textwidth}\n"
-                "\\centering\n"
-                "\\rule{8cm}{0.4pt} \\\\[1ex]\n"
-                f"\\textbf{{ {vereador_nome} }} \\\\[0.5ex]\n"
-                f"\\textit{{ {titulo_vereador} }}\n"
-                "\\end{minipage}\n"
-            )
         dados = {
             'numero': request.form['numero'],
             'ano': str(data_obj.year),
@@ -245,13 +194,22 @@ def indicacao():
             'justificativa': request.form['justificativa'],
             'vereador': vereador_final,
             'vereador_nome': vereador_nome,
-            'titulo_vereador': titulo_vereador,
-            'assinaturas': assinaturas,
+            'autores_selecionados': autores_selecionados # Passa a lista de autores para o gerador
         }
+        # Gera arquivo temporário 
+        tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
+        tmp.close() # Fecha o arquivo para que a outra função possa abri-lo
 
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
+        try:
+            # Gera o PDF no caminho do arquivo temporário
             gerar_indicacao(dados, tmp.name)
-            return send_file(tmp.name, as_attachment=True, download_name=f"Indicação {dados['numero']}_{dados['ano']}.pdf")
+            
+            # Envia o arquivo que foi salvo no disco
+            return send_file(tmp.name, as_attachment=True, download_name=f"Indicacao_{dados['numero']}_{dados['ano']}.pdf")
+            
+        finally:
+            # Garante que o arquivo temporário seja deletado depois que a requisição terminar
+            os.remove(tmp.name)
             
     else:
         return render_template('form_indicacao.html')
