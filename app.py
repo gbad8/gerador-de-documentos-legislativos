@@ -66,7 +66,7 @@ def oficio_padrao():
         data_obj = datetime.strptime(data_str, '%Y-%m-%d')
         
         is_conjunta = 'conjunta_check' in request.form
-        
+        autores_selecionados = ""
         vereador_final = ""
         
         if is_conjunta:
