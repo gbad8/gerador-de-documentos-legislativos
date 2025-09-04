@@ -8,7 +8,7 @@ venv.bak/
 
 Cache e arquivos compilados do Python
 São arquivos temporários que o Python cria para otimizar a execução.
-pycache/
+__pycache__/
 *.pyc
 *.pyo
 *.pyd
