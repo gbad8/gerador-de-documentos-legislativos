@@ -21,6 +21,12 @@ try:
 except locale.Error:
     print("Aviso: O locale 'pt_BR.utf8' não foi encontrado. Usando o locale padrão (inglês).")
 
+# Configurando usuários
+USERS = {
+        "guilherme": "1516170224",
+        "emerson": "marjose1997"
+        }
+
 @app.route('/')
 def index():
     if not session.get('logged_in'):
@@ -32,7 +38,7 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        if username == 'admin' and password == 'admin':
+        if username in USERS and USERS[username] == password:
             session['logged_in'] = True
             return redirect(url_for('index'))
         else:
