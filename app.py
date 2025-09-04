@@ -14,8 +14,12 @@ from gerador_indicacao import gerar_indicacao
 from gerador_oficio import gerar_oficio # <- Importa a nova função
 
 app = Flask(__name__)
-app.secret_key = 'sua_chave_secreta_aqui'  # Necessário para sessões
-locale.setlocale(locale.LC_TIME, 'pt_BR.utf8')
+app.secret_key = os.environ.get('SECRET_KEY', 'chave-padrao')
+
+try:
+    locale.setlocale(locale.LC_TIME, 'pt_BR.utf8')
+except: locale.Error:
+    print("Aviso: O locale 'pt_BR.utf8' não foi encontrado. Usando o locale padrão (inglês).")
 
 @app.route('/')
 def index():
