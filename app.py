@@ -27,12 +27,33 @@ USERS = {
         "emerson": "marjose1997"
         }
 
+# Tradução dos meses para português
+def traduzir_data(data_obj):
+    meses_pt = {
+        "January": "Janeiro", "February": "Fevereiro", "March": "Março",
+        "April": "Abril", "May": "Maio", "June": "Junho",
+        "July": "Julho", "August": "Agosto", "September": "Setembro",
+        "October": "Outubro", "November": "Novembro", "December": "Dezembro"
+    }
+    # Formata a data em inglês primeiro
+    data_em_ingles = data_obj.strftime('%d de %B de %Y')
+
+    # Traduz o mês
+    for mes_en, mes_pt in meses_pt.items():
+        if mes_en in data_em_ingles:
+            return data_em_ingles.replace(mes_en, mes_pt)
+
+    return data_em_ingles # Retorna em inglês se a tradução falhar
+
+# ROTAS
+# Rota Index
 @app.route('/')
 def index():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
     return render_template('index.html')
 
+# Rota de Login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -45,6 +66,7 @@ def login():
             flash('Usuário ou senha incorretos!')
     return render_template('login.html')
 
+# Rota de Logout
 @app.route('/logout')
 def logout():
     session.pop('logged_in', None)
@@ -58,6 +80,7 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+# Rota de gerador de ofício
 @app.route('/oficio-padrao', methods=['GET', 'POST'])
 @login_required
 def oficio_padrao():
@@ -95,7 +118,7 @@ def oficio_padrao():
         dados = {
             'numero': request.form['numero'],
             'ano': str(data_obj.year),
-            'data': data_obj.strftime('%d de %B de %Y'),
+            'data': traduzir_data(data_obj),
             'assunto': request.form['assunto'],
             'proposicao': request.form['proposicao'],
             'n-indicacao': request.form['n-indicacao'],
@@ -105,7 +128,6 @@ def oficio_padrao():
             'autores_selecionados': autores_selecionados
         }
 
-        # --- LÓGICA DE GERAÇÃO COM REPORTLAB ---
         tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
         tmp.close()
 
@@ -122,6 +144,7 @@ def oficio_padrao():
     else:
         return render_template('form.html')
 
+# Rota de gerador de indicação
 @app.route('/indicacao', methods=['GET', 'POST'])
 @login_required
 def indicacao():
@@ -154,7 +177,7 @@ def indicacao():
         dados = {
             'numero': request.form['numero'],
             'ano': str(data_obj.year),
-            'data': data_obj.strftime('%d de %B de %Y'),
+            'data': traduzir_data(data_obj),
             'assunto': request.form['assunto'],
             'solicitacao': request.form['solicitacao'],
             'justificativa': request.form['justificativa'],
