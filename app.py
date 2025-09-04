@@ -18,7 +18,7 @@ app.secret_key = os.environ.get('SECRET_KEY', 'chave-padrao')
 
 try:
     locale.setlocale(locale.LC_TIME, 'pt_BR.utf8')
-except: locale.Error:
+except locale.Error:
     print("Aviso: O locale 'pt_BR.utf8' não foi encontrado. Usando o locale padrão (inglês).")
 
 @app.route('/')
