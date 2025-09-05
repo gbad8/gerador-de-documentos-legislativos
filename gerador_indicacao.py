@@ -201,7 +201,7 @@ def gerar_indicacao(dados, nome_arquivo):
 
     # Justificativa
     story.append(Spacer(1, 2/3 * cm)) # Espaço
-    story.append(Paragraph(f"""<b>JUSTIFICATIVA: {dados['justificativa']}</b>""", normal_justificado))
+    story.append(Paragraph(f"""<b>JUSTIFICATIVA:</b> {dados['justificativa']}""", normal_justificado))
 
     # Conclusão
     story.append(Spacer(1, 2/3 * cm)) # Espaço
