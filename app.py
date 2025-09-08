@@ -132,7 +132,8 @@ def oficio_livre():
             'vereador': request.form['vereador'],
             'destinatario': request.form['destinatario'],
             'cargo': request.form['cargo'],
-            'corpo_oficio': request.form['corpo_oficio']
+            'corpo_oficio': request.form['corpo_oficio'],
+            'orgao': request.form['orgao']
         }
 
         tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")

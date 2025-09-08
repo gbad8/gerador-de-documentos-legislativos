@@ -92,7 +92,7 @@ def gerar_oficio_livre(dados, nome_arquivo):
     story = []
 
     # Preâmbulo
-    story.append(Paragraph("<b>Secretaria Legislativa</b>", right_aligned_style))
+    story.append(Paragraph(f"<b>{dados['orgao']}</b>", right_aligned_style))
     story.append(Paragraph(f"<b>Ofício n° {dados['numero']}/{dados['ano']}</b>", normal_justificado))
     story.append(Spacer(1, 0.6 * cm))
     story.append(Paragraph(f"Vila Nova dos Martírios, {dados['data']}.", right_aligned_style))
