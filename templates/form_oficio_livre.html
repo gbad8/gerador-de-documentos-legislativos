@@ -112,7 +112,7 @@
 <main>
     <div class="container">
         <form method="post">
-        <legend>Ofício Livre</legend>
+        <legend>Redação de Ofício Livre</legend>
         <div class="row g-3 align-items-center mb-3">
             
             <!-- indentificação do ofício --> 
@@ -139,21 +139,38 @@
         </div>
 
         <!-- Autor -->
-        <div class="mb-3">
-            <label class="form-label" for="vereador">Autor:</label>
-            <select class ="form-select" name="vereador" id="vereador" required>
-               <option value="">-- Selecione --</option>
-               <option value="Alione Farias de Almeida">Alione Farias de Almeida</option>
-               <option value="Elson Gomes da Silva">Elson Gomes da Silva</option>
-               <option value="Isac Soares de Araújo">Isac Soares de Araújo</option>
-               <option value="João Fredson Alves de Carvalho">João Fredson Alves de Carvalho</option>
-               <option value="Jorge Vieira dos Santos Filho">Jorge Vieira dos Santos Filho</option>
-               <option value="José Givanildo de Sousa Matias">José Givanildo de Sousa Matias</option>
-               <option value="Josemar Rodrigues da Silva">Josemar Rodrigues da Silva</option>
-               <option value="Maria José Ferreira de Sousa">Maria José Ferreira de Sousa</option>
-               <option value="Manoel Ferreira da Silva">Manoel Ferreira da Silva</option>
-               <option value="Ricardo Viana Matos">Ricardo Viana Matos</option>
-           </select>
+	<div class="row g-3 mb-3">
+            <div class="col-md-6">
+                <label class="form-label" for="vereador">Autor:</label>
+                <select class ="form-select" name="vereador" id="vereador" required>
+                   <option value="">-- Selecione --</option>
+                   <option value="Alione Farias de Almeida">Alione Farias de Almeida</option>
+                   <option value="Elson Gomes da Silva">Elson Gomes da Silva</option>
+                   <option value="Isac Soares de Araújo">Isac Soares de Araújo</option>
+                   <option value="João Fredson Alves de Carvalho">João Fredson Alves de Carvalho</option>
+                   <option value="Jorge Vieira dos Santos Filho">Jorge Vieira dos Santos Filho</option>
+                   <option value="José Givanildo de Sousa Matias">José Givanildo de Sousa Matias</option>
+                   <option value="Josemar Rodrigues da Silva">Josemar Rodrigues da Silva</option>
+                   <option value="Maria José Ferreira de Sousa">Maria José Ferreira de Sousa</option>
+                   <option value="Manoel Ferreira da Silva">Manoel Ferreira da Silva</option>
+                   <option value="Ricardo Viana Matos">Ricardo Viana Matos</option>
+               </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="orgao">Órgão:</label>
+                <select class="form-select" name="orgao" id="orgao" required>
+                    <option value="">-- Selecione --</option>
+		    <option value="Mesa Diretora">Mesa Diretora</option>
+                    <option value="Secretaria Legislativa">Secretaria Legislativa</option>
+                    <option value="Gabinete da Presidência">Gabinete da Presidência</option>
+                    <option value="Gabinete do Vereador">Gabinete do Vereador</option>
+                    <option value="Comissão de Educação, Saúde e Assistência Social">Comissão Permanente de Educação, Saúde e Assistência Social</option>
+                    <option value="Comissão de Ética e Decoro Parlamentar">Comissão de Ética e Decoro Parlamentar</option>
+                    <option value="Comissão de Finanças e Orçamento">Comissão de Finanças e Orçamento</option>
+                    <option value="Comissão de Justiça e Redação">Comissão de Justiça e Redação</option>
+                    <option value="Comissão de Obras e Serviços Públicos">Comissão de Obras e Serviços Públicos</option>
+                </select>
+            </div>
         </div>
 
         <!-- Destinatário e Cargo -->
