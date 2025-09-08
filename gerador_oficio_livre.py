@@ -122,7 +122,7 @@ def gerar_oficio_livre(dados, nome_arquivo):
     info_autor = VEREADORES.get(nome_autor, {"titulo": "Vereador(a)"}) # Valor padrão
     cargo_autor = info_autor.get("titulo")
 
-    linha_assinatura = Table([['-' * 45]], colWidths=[8*cm])
+    linha_assinatura = Table([['_' * 45]], colWidths=[8*cm])
     linha_assinatura.setStyle([('ALIGN', (0,0), (-1,-1), 'CENTER'),
                                ('LEFTPADDING', (0,0), (-1,-1), 0),
                                ('RIGHTPADDING', (0,0), (-1,-1), 0)])
