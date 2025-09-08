@@ -6,24 +6,26 @@
 
 from flask import Flask, render_template, request, redirect, url_for, session, flash, send_file, jsonify
 from datetime import datetime
-import locale
 import tempfile
 import os
 from functools import wraps
-from gerador_indicacao import gerar_indicacao
-from gerador_oficio import gerar_oficio # <- Importa a nova função
 import google.generativeai as genai
 from dotenv import load_dotenv
+
+# Carrega as variáveis de ambiente do ficheiro .env
+load_dotenv()
+
+from gerador_indicacao import gerar_indicacao
+from gerador_oficio import gerar_oficio
 from gerador_oficio_livre import gerar_oficio_livre
 
-load_dotenv() # <-- Executa a função que carrega as variáveis do arquivo .env
-
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY', 'chave-padrao')
 
-# --- SECÇÃO DE CONFIGURAÇÃO DA API DO GEMINI (EM FALTA NO SEU FICHEIRO) ---
+# Configuração das chaves secretas
+app.secret_key = os.environ.get('SECRET_KEY', 'chave-padrao-para-desenvolvimento')
+
+# Configuração da API do Gemini
 try:
-    # Esta linha lê a variável GEMINI_API_KEY que o load_dotenv() carregou
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
         print("AVISO: A variável de ambiente GEMINI_API_KEY não foi encontrada.")
@@ -33,18 +35,13 @@ except Exception as e:
     print(f"AVISO: Falha ao configurar a API do Gemini. Funcionalidades de IA estarão desabilitadas. Erro: {e}")
 
 
-try:
-    locale.setlocale(locale.LC_TIME, 'pt_BR.utf8')
-except locale.Error:
-    print("Aviso: O locale 'pt_BR.utf8' não foi encontrado. Usando o locale padrão (inglês).")
-
-# Configurando usuários
+# Configuração de Usuários
 USERS = {
         "guilherme": "1516170224",
         "emerson": "marjose1997"
         }
 
-# Tradução dos meses para português
+# Função Auxiliar para Tradução de Datas
 def traduzir_data(data_obj):
     meses_pt = {
         "January": "Janeiro", "February": "Fevereiro", "March": "Março",
@@ -52,25 +49,29 @@ def traduzir_data(data_obj):
         "July": "Julho", "August": "Agosto", "September": "Setembro",
         "October": "Outubro", "November": "Novembro", "December": "Dezembro"
     }
-    # Formata a data em inglês primeiro
     data_em_ingles = data_obj.strftime('%d de %B de %Y')
-
-    # Traduz o mês
     for mes_en, mes_pt in meses_pt.items():
         if mes_en in data_em_ingles:
             return data_em_ingles.replace(mes_en, mes_pt)
+    return data_em_ingles
 
-    return data_em_ingles # Retorna em inglês se a tradução falhar
+# Decorator para exigir login
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('logged_in'):
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
-# ROTAS
-# Rota Index
+# --- ROTAS DA APLICAÇÃO ---
+
 @app.route('/')
 def index():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
     return render_template('index.html')
 
-# Rota de Login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -83,20 +84,12 @@ def login():
             flash('Usuário ou senha incorretos!')
     return render_template('login.html')
 
-# Rota de Logout
 @app.route('/logout')
 def logout():
     session.pop('logged_in', None)
     return redirect(url_for('login'))
 
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not session.get('logged_in'):
-            return redirect(url_for('login'))
-        return f(*args, **kwargs)
-    return decorated_function
-
+# Rota da API para gerar texto com Gemini
 @app.route('/gerar-corpo-oficio', methods=['POST'])
 @login_required
 def gerar_corpo_oficio_route():
@@ -123,7 +116,7 @@ def gerar_corpo_oficio_route():
         print(f"Erro ao chamar a API do Gemini: {e}")
         return jsonify({'error': 'Não foi possível gerar o texto no momento.'}), 500
 
-# --- NOVA ROTA PARA OFÍCIO LIVRE ---
+# Rota para o formulário e geração do Ofício Livre
 @app.route('/oficio_livre', methods=['GET', 'POST'])
 @login_required
 def oficio_livre():
@@ -154,19 +147,17 @@ def oficio_livre():
         finally:
             os.remove(tmp.name)
     else:
-        # Exibe o formulário quando o método é GET
         return render_template('form_oficio_livre.html')
 
-# Rota de gerador de ofício
+# Rota para o Ofício Padrão (que encaminha indicações)
 @app.route('/oficio-padrao', methods=['GET', 'POST'])
 @login_required
 def oficio_padrao():
     if request.method == 'POST':
         data_str = request.form.get('data')
         data_obj = datetime.strptime(data_str, '%Y-%m-%d')
-        
         is_conjunta = 'conjunta_check' in request.form
-        autores_selecionados = ""
+        autores_selecionados = []
         vereador_final = ""
         
         if is_conjunta:
@@ -207,7 +198,6 @@ def oficio_padrao():
 
         tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
         tmp.close()
-
         try:
             gerar_oficio(dados, tmp.name)
             return send_file(
@@ -217,11 +207,10 @@ def oficio_padrao():
             )
         finally:
             os.remove(tmp.name)
-
     else:
         return render_template('form.html')
 
-# Rota de gerador de indicação
+# Rota para as Indicações
 @app.route('/indicacao', methods=['GET', 'POST'])
 @login_required
 def indicacao():
@@ -274,8 +263,5 @@ def indicacao():
             
     else:
         return render_template('form_indicacao.html')
-
-if __name__ == '__main__':
-    app.run(debug=True)
 
 # Soli Deo Gloria
