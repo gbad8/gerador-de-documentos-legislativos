@@ -114,7 +114,7 @@ def gerar_oficio_livre(dados, nome_arquivo):
     story.append(Spacer(1, 1.5 * cm))
 
     # Desfecho
-    story.append(Paragraph("Atenciosamente,", normal_centralizado))
+    story.append(Paragraph("Atenciosamente,", normal_justificado))
     story.append(Spacer(1, 1.5 * cm))
 
     # Assinatura
@@ -122,8 +122,10 @@ def gerar_oficio_livre(dados, nome_arquivo):
     info_autor = VEREADORES.get(nome_autor, {"titulo": "Vereador(a)"}) # Valor padrão
     cargo_autor = info_autor.get("titulo")
 
-    linha_assinatura = Table([['']], colWidths=[8*cm])
-    linha_assinatura.setStyle([('LINEABOVE', (0,0), (-1,-1), 0.4, 'black')])
+    linha_assinatura = Table([['-' * 45]], colWidths=[8*cm])
+    linha_assinatura.setStyle([('ALIGN', (0,0), (-1,-1), 'CENTER'),
+                               ('LEFTPADDING', (0,0), (-1,-1), 0),
+                               ('RIGHTPADDING', (0,0), (-1,-1), 0)])
 
     assinatura_bloco = [
         linha_assinatura,
