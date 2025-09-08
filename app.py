@@ -4,7 +4,7 @@
 # Para visualizar uma cópia desta licença, visite http://creativecommons.org/licenses/by-sa/4.0/
 # ou envie uma carta para Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
-from flask import Flask, render_template, request, redirect, url_for, session, flash, send_file
+from flask import Flask, render_template, request, redirect, url_for, session, flash, send_file, jsonify
 from datetime import datetime
 import locale
 import tempfile
@@ -12,9 +12,26 @@ import os
 from functools import wraps
 from gerador_indicacao import gerar_indicacao
 from gerador_oficio import gerar_oficio # <- Importa a nova função
+import google.generativeai as genai
+from dotenv import load_dotenv
+from gerador_oficio_livre import gerar_oficio_livre
+
+load_dotenv() # <-- Executa a função que carrega as variáveis do arquivo .env
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'chave-padrao')
+
+# --- SECÇÃO DE CONFIGURAÇÃO DA API DO GEMINI (EM FALTA NO SEU FICHEIRO) ---
+try:
+    # Esta linha lê a variável GEMINI_API_KEY que o load_dotenv() carregou
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        print("AVISO: A variável de ambiente GEMINI_API_KEY não foi encontrada.")
+    else:
+        genai.configure(api_key=api_key)
+except Exception as e:
+    print(f"AVISO: Falha ao configurar a API do Gemini. Funcionalidades de IA estarão desabilitadas. Erro: {e}")
+
 
 try:
     locale.setlocale(locale.LC_TIME, 'pt_BR.utf8')
@@ -79,6 +96,66 @@ def login_required(f):
             return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated_function
+
+@app.route('/gerar-corpo-oficio', methods=['POST'])
+@login_required
+def gerar_corpo_oficio_route():
+    try:
+        topico = request.json.get('topico')
+        if not topico:
+            return jsonify({'error': 'Tópico não fornecido.'}), 400
+
+        prompt = f"""
+        Aja como um assessor legislativo experiente da Câmara Municipal de Vila Nova dos Martírios - MA.
+        Sua tarefa é redigir o corpo de um ofício. O texto deve ser formal, claro, conciso e respeitoso,
+        seguindo a norma culta da língua portuguesa e o padrão de documentos oficiais.
+        O texto deve conter parágrafos bem estruturados e não deve incluir cabeçalho, destinatário, assunto ou assinatura, apenas o texto principal.
+
+        O tópico do ofício é: "{topico}"
+        """
+
+        model = genai.GenerativeModel('gemini-1.5-flash-latest')
+        response = model.generate_content(prompt)
+
+        return jsonify({'corpo_oficio': response.text})
+
+    except Exception as e:
+        print(f"Erro ao chamar a API do Gemini: {e}")
+        return jsonify({'error': 'Não foi possível gerar o texto no momento.'}), 500
+
+# --- NOVA ROTA PARA OFÍCIO LIVRE ---
+@app.route('/oficio_livre', methods=['GET', 'POST'])
+@login_required
+def oficio_livre():
+    if request.method == 'POST':
+        data_str = request.form.get('data')
+        data_obj = datetime.strptime(data_str, '%Y-%m-%d')
+
+        dados = {
+            'numero': request.form['numero'],
+            'ano': str(data_obj.year),
+            'data': traduzir_data(data_obj),
+            'assunto': request.form['assunto'],
+            'vereador': request.form['vereador'],
+            'destinatario': request.form['destinatario'],
+            'cargo': request.form['cargo'],
+            'corpo_oficio': request.form['corpo_oficio']
+        }
+
+        tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
+        tmp.close()
+        try:
+            gerar_oficio_livre(dados, tmp.name)
+            return send_file(
+                tmp.name,
+                as_attachment=True,
+                download_name=f"Oficio_Livre_{dados['numero']}_{dados['ano']}.pdf"
+            )
+        finally:
+            os.remove(tmp.name)
+    else:
+        # Exibe o formulário quando o método é GET
+        return render_template('form_oficio_livre.html')
 
 # Rota de gerador de ofício
 @app.route('/oficio-padrao', methods=['GET', 'POST'])
@@ -201,4 +278,4 @@ def indicacao():
 if __name__ == '__main__':
     app.run(debug=True)
 
-## Soli Deo Gloria ##
+# Soli Deo Gloria
