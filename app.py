@@ -12,7 +12,6 @@ from functools import wraps
 import google.generativeai as genai
 from dotenv import load_dotenv
 
-# Carrega as variáveis de ambiente do ficheiro .env
 load_dotenv()
 
 from gerador_indicacao import gerar_indicacao
@@ -20,11 +19,8 @@ from gerador_oficio import gerar_oficio
 from gerador_oficio_livre import gerar_oficio_livre
 
 app = Flask(__name__)
-
-# Configuração das chaves secretas
 app.secret_key = os.environ.get('SECRET_KEY', 'chave-padrao-para-desenvolvimento')
 
-# Configuração da API do Gemini
 try:
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
@@ -34,14 +30,8 @@ try:
 except Exception as e:
     print(f"AVISO: Falha ao configurar a API do Gemini. Funcionalidades de IA estarão desabilitadas. Erro: {e}")
 
+USERS = { "guilherme": "1516170224", "emerson": "marjose1997" }
 
-# Configuração de Usuários
-USERS = {
-        "guilherme": "1516170224",
-        "emerson": "marjose1997"
-        }
-
-# Função Auxiliar para Tradução de Datas
 def traduzir_data(data_obj):
     meses_pt = {
         "January": "Janeiro", "February": "Fevereiro", "March": "Março",
@@ -55,7 +45,6 @@ def traduzir_data(data_obj):
             return data_em_ingles.replace(mes_en, mes_pt)
     return data_em_ingles
 
-# Decorator para exigir login
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -64,12 +53,11 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-# --- ROTAS DA APLICAÇÃO ---
+# --- ROTAS ---
 
 @app.route('/')
+@login_required
 def index():
-    if not session.get('logged_in'):
-        return redirect(url_for('login'))
     return render_template('index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -85,11 +73,11 @@ def login():
     return render_template('login.html')
 
 @app.route('/logout')
+@login_required
 def logout():
     session.pop('logged_in', None)
     return redirect(url_for('login'))
 
-# Rota da API para gerar texto com Gemini
 @app.route('/gerar-corpo-oficio', methods=['POST'])
 @login_required
 def gerar_corpo_oficio_route():
@@ -97,43 +85,44 @@ def gerar_corpo_oficio_route():
         topico = request.json.get('topico')
         if not topico:
             return jsonify({'error': 'Tópico não fornecido.'}), 400
-
         prompt = f"""
         Aja como um assessor legislativo experiente da Câmara Municipal de Vila Nova dos Martírios - MA.
         Sua tarefa é redigir o corpo de um ofício. O texto deve ser formal, claro, conciso e respeitoso,
         seguindo a norma culta da língua portuguesa e o padrão de documentos oficiais.
         O texto deve conter parágrafos bem estruturados e não deve incluir cabeçalho, destinatário, assunto ou assinatura, apenas o texto principal.
-
         O tópico do ofício é: "{topico}"
         """
-
         model = genai.GenerativeModel('gemini-1.5-flash-latest')
         response = model.generate_content(prompt)
-
         return jsonify({'corpo_oficio': response.text})
-
     except Exception as e:
         print(f"Erro ao chamar a API do Gemini: {e}")
         return jsonify({'error': 'Não foi possível gerar o texto no momento.'}), 500
 
-# Rota para o formulário e geração do Ofício Livre
 @app.route('/oficio_livre', methods=['GET', 'POST'])
 @login_required
 def oficio_livre():
     if request.method == 'POST':
         data_str = request.form.get('data')
         data_obj = datetime.strptime(data_str, '%Y-%m-%d')
+        
+        is_conjunta = 'conjunta_check' in request.form
+        autores_selecionados = request.form.getlist('autores_selecionados[]') if is_conjunta else []
+        
+        # Define o autor principal ou a lista de autores para os dados
+        autor_principal = request.form.get('vereador') if not is_conjunta else None
 
         dados = {
             'numero': request.form['numero'],
             'ano': str(data_obj.year),
             'data': traduzir_data(data_obj),
             'assunto': request.form['assunto'],
-            'vereador': request.form['vereador'],
+            'vereador': autor_principal,
+            'autores_selecionados': autores_selecionados,
+            'orgao': request.form['orgao'],
             'destinatario': request.form['destinatario'],
             'cargo': request.form['cargo'],
-            'corpo_oficio': request.form['corpo_oficio'],
-            'orgao': request.form['orgao']
+            'corpo_oficio': request.form['corpo_oficio']
         }
 
         tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
@@ -150,7 +139,6 @@ def oficio_livre():
     else:
         return render_template('form_oficio_livre.html')
 
-# Rota para o Ofício Padrão (que encaminha indicações)
 @app.route('/oficio-padrao', methods=['GET', 'POST'])
 @login_required
 def oficio_padrao():
@@ -160,7 +148,6 @@ def oficio_padrao():
         is_conjunta = 'conjunta_check' in request.form
         autores_selecionados = []
         vereador_final = ""
-        
         if is_conjunta:
             autores_selecionados = request.form.getlist('autores_selecionados[]')
             if autores_selecionados:
@@ -170,7 +157,6 @@ def oficio_padrao():
                     vereador_final = autores_selecionados[0]
             else:
                 vereador_final = "Nenhum autor selecionado"
-            
             if len(autores_selecionados) > 1:
                 vereador_final = "dos(as) Exmos(as). Senhores(as) Vereadores(as) " + vereador_final
             elif len(autores_selecionados) == 1:
@@ -183,7 +169,6 @@ def oficio_padrao():
                 vereador_final = "da Exma. Senhora Vereadora " + vereador_final_nome
             else:
                 vereador_final = "do Exmo. Senhor Vereador " + vereador_final_nome
-        
         dados = {
             'numero': request.form['numero'],
             'ano': str(data_obj.year),
@@ -196,7 +181,6 @@ def oficio_padrao():
             'sessao': request.form['sessao'],
             'autores_selecionados': autores_selecionados
         }
-
         tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
         tmp.close()
         try:
@@ -211,20 +195,16 @@ def oficio_padrao():
     else:
         return render_template('form.html')
 
-# Rota para as Indicações
 @app.route('/indicacao', methods=['GET', 'POST'])
 @login_required
 def indicacao():
     if request.method == 'POST':
         data_str = request.form.get('data')
         data_obj = datetime.strptime(data_str, '%Y-%m-%d')
-        
         is_conjunta = 'conjunta_check' in request.form
         autores_selecionados = request.form.getlist('autores_selecionados[]') if is_conjunta else []
-        
         vereador_final = ""
         vereador_nome = ""
-
         if is_conjunta:
             if len(autores_selecionados) > 1:
                 vereador_nome = ", ".join(autores_selecionados[:-1]) + " e " + autores_selecionados[-1]
@@ -240,7 +220,6 @@ def indicacao():
                 vereador_final = "da Exma. Senhora Vereadora " + vereador_nome
             else:
                 vereador_final = "do Exmo. Senhor Vereador " + vereador_nome
-        
         dados = {
             'numero': request.form['numero'],
             'ano': str(data_obj.year),
@@ -252,17 +231,17 @@ def indicacao():
             'vereador_nome': vereador_nome,
             'autores_selecionados': autores_selecionados
         }
-        
         tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
         tmp.close()
-
         try:
             gerar_indicacao(dados, tmp.name)
             return send_file(tmp.name, as_attachment=True, download_name=f"Indicacao_{dados['numero']}_{dados['ano']}.pdf")
         finally:
             os.remove(tmp.name)
-            
     else:
         return render_template('form_indicacao.html')
 
-# Soli Deo Gloria
+if __name__ == '__main__':
+    app.run(debug=True)
+
+

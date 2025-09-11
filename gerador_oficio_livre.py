@@ -1,6 +1,6 @@
 # Modulos utilizados
 from reportlab.lib.pagesizes import A4
-from reportlab.platypus import BaseDocTemplate, PageTemplate, Frame, Paragraph, Spacer, Table
+from reportlab.platypus import BaseDocTemplate, PageTemplate, Frame, Paragraph, Spacer, Table, KeepTogether
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_RIGHT, TA_JUSTIFY, TA_CENTER
 from reportlab.lib.units import cm
@@ -13,7 +13,6 @@ from reportlab.pdfbase.ttfonts import TTFont
 base_dir = os.path.dirname(os.path.abspath(__file__))
 fonts_path = os.path.join(base_dir, "fonts")
 
-# Assume que a pasta 'fonts' com os arquivos .ttf existe na raiz do projeto
 try:
     pdfmetrics.registerFont(TTFont('Times', os.path.join(fonts_path, 'times.ttf')))
     pdfmetrics.registerFont(TTFont('Times-Bold', os.path.join(fonts_path, 'timesbd.ttf')))
@@ -49,6 +48,32 @@ VEREADORES = {
     "Manoel Ferreira da Silva":         {"titulo": "Vereador", "genero": "M"},
     "Jorge Vieira dos Santos Filho":    {"titulo": "Prefeito Municipal", "genero": "M"}
 }
+
+# --- FUNÇÃO AUXILIAR ---
+def definir_tratamento(cargo):
+    cargo_lower = cargo.lower()
+    cargos_excelentissimo = [
+        'prefeito', 'prefeita', 'governador', 'governadora', 'presidente', 
+        'juiz', 'juíza', 'deputado', 'deputada', 'senador', 'senadora', 
+        'ministro', 'ministra', 'secretário', 'secretária'
+    ]
+    palavras_femininas = [
+        'prefeita', 'governadora', 'presidenta', 'juíza', 'deputada', 
+        'senadora', 'ministra', 'secretária', 'vereadora', 'diretora', 'gerente'
+    ]
+    tratamento = "Ao Ilmo. Sr."
+    vocativo = "Senhor"
+    for termo in cargos_excelentissimo:
+        if termo in cargo_lower:
+            tratamento = "Ao Exmo. Sr."
+            vocativo = "Excelentíssimo Senhor"
+            break
+    for termo in palavras_femininas:
+        if termo in cargo_lower:
+            tratamento = tratamento.replace("Ao", "À").replace("Sr.", "Sra.")
+            vocativo = vocativo.replace("Senhor", "Senhora")
+            break
+    return f"{tratamento} {vocativo}"
 
 # Cabeçalho e Rodapé
 def cabecalho(canvas, doc):
@@ -99,7 +124,8 @@ def gerar_oficio_livre(dados, nome_arquivo):
     story.append(Spacer(1, 1.5 * cm))
 
     # Destinatário
-    story.append(Paragraph(f"Ao(À) Ilmo(a). Sr(a).", normal_justificado))
+    tratamento = definir_tratamento(dados['cargo'])
+    story.append(Paragraph(tratamento, normal_justificado))
     story.append(Paragraph(f"<b>{dados['destinatario']}</b>", normal_justificado))
     story.append(Paragraph(f"<i>{dados['cargo']}</i>", normal_justificado))
     story.append(Spacer(1, 1.5 * cm))
@@ -114,27 +140,30 @@ def gerar_oficio_livre(dados, nome_arquivo):
     story.append(Spacer(1, 1.5 * cm))
 
     # Desfecho
-    story.append(Paragraph("Atenciosamente,", normal_justificado))
+    story.append(Paragraph("Atenciosamente,", normal_centralizado))
     story.append(Spacer(1, 1.5 * cm))
 
     # Assinatura
-    nome_autor = dados.get('vereador')
-    info_autor = VEREADORES.get(nome_autor, {"titulo": "Vereador(a)"}) # Valor padrão
-    cargo_autor = info_autor.get("titulo")
+    autores = dados.get('autores_selecionados', [])
+    if not autores: # Se não for conjunta, usa o autor único
+        autor_unico = dados.get('vereador')
+        if autor_unico:
+            autores = [autor_unico]
 
-    linha_assinatura = Table([['_' * 45]], colWidths=[8*cm])
-    linha_assinatura.setStyle([('ALIGN', (0,0), (-1,-1), 'CENTER'),
-                               ('LEFTPADDING', (0,0), (-1,-1), 0),
-                               ('RIGHTPADDING', (0,0), (-1,-1), 0)])
+    linha_assinatura = Paragraph('_' * 45, normal_centralizado)
 
-    assinatura_bloco = [
-        linha_assinatura,
-        Spacer(1, 0.2 * cm),
-        Paragraph(f"<b>{nome_autor}</b>", normal_centralizado),
-        Paragraph(f"<i>{cargo_autor}</i>", normal_centralizado)
-    ]
-    story.extend(assinatura_bloco)
+    for nome in autores:
+        info_autor = VEREADORES.get(nome, {"titulo": "Vereador(a)"})
+        cargo_autor = info_autor.get("titulo")
 
+        bloco_assinatura = KeepTogether([
+            linha_assinatura,
+            Paragraph(f"<b>{nome}</b>", normal_centralizado),
+            Paragraph(f"<i>{cargo_autor}</i>", normal_centralizado),
+            Spacer(1, 1.5 * cm) # Espaço entre assinaturas
+        ])
+        story.append(bloco_assinatura)
+        
     doc.build(story)
 
-## Soli Deo Gloria
+

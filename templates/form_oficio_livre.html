@@ -112,7 +112,7 @@
 <main>
     <div class="container">
         <form method="post">
-        <legend>Redação de Ofício Livre</legend>
+        <legend>Ofício Livre</legend>
         <div class="row g-3 align-items-center mb-3">
             
             <!-- indentificação do ofício --> 
@@ -138,8 +138,8 @@
             </label>
         </div>
 
-        <!-- Autor -->
-	<div class="row g-3 mb-3">
+        <!-- Autor e Órgão -->
+        <div class="row g-3 mb-3">
             <div class="col-md-6">
                 <label class="form-label" for="vereador">Autor:</label>
                 <select class ="form-select" name="vereador" id="vereador" required>
@@ -160,25 +160,43 @@
                 <label class="form-label" for="orgao">Órgão:</label>
                 <select class="form-select" name="orgao" id="orgao" required>
                     <option value="">-- Selecione --</option>
-		    <option value="Mesa Diretora">Mesa Diretora</option>
                     <option value="Secretaria Legislativa">Secretaria Legislativa</option>
                     <option value="Gabinete da Presidência">Gabinete da Presidência</option>
-                    <option value="Gabinete do Vereador">Gabinete do Vereador</option>
-                    <option value="Comissão de Educação, Saúde e Assistência Social">Comissão Permanente de Educação, Saúde e Assistência Social</option>
-                    <option value="Comissão de Ética e Decoro Parlamentar">Comissão de Ética e Decoro Parlamentar</option>
                     <option value="Comissão de Finanças e Orçamento">Comissão de Finanças e Orçamento</option>
                     <option value="Comissão de Justiça e Redação">Comissão de Justiça e Redação</option>
-                    <option value="Comissão de Obras e Serviços Públicos">Comissão de Obras e Serviços Públicos</option>
                 </select>
             </div>
+        </div>
+
+        <!-- Autoria Conjunta -->
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="conjuntaCheck" name="conjunta_check">
+            <label class="form-check-label" for="conjuntaCheck">
+                Autoria Conjunta?
+            </label>
+        </div>
+
+        <div id="autores-div" class="mb-3" style="display: none;">
+            <label class="form-label" for="autores-select">Autores:</label><br>
+            <select class="form-select" id="autores-select" name="autores_selecionados[]" multiple>
+                <option value="Alione Farias de Almeida">Alione Farias de Almeida</option>
+                <option value="Elson Gomes da Silva">Elson Gomes da Silva</option>
+                <option value="Isac Soares de Araújo">Isac Soares de Araújo</option>
+                <option value="João Fredson Alves de Carvalho">João Fredson Alves de Carvalho</option>
+                <option value="José Givanildo de Sousa Matias">José Givanildo de Sousa Matias</option>
+                <option value="Josemar Rodrigues da Silva">Josemar Rodrigues da Silva</option>
+                <option value="Maria José Ferreira de Sousa">Maria José Ferreira de Sousa</option>
+                <option value="Manoel Ferreira da Silva">Manoel Ferreira da Silva</option>
+                <option value="Ricardo Viana Matos">Ricardo Viana Matos</option>
+            </select>
         </div>
 
         <!-- Destinatário e Cargo -->
         <div class="row g-3 mb-3">
             <div class="col-md-6">
                 <label for="destinatario" class="form-label">Destinatário:</label>
-                <input type="text" class="form-control" id="destinatario" name="destinatario" placeholder="Ex: João das Neves Coelho" required> </div>
-	    
+                <input type="text" class="form-control" id="destinatario" name="destinatario" placeholder="Ex: Sr. Chefe da Agência da Receita" required>
+            </div>
             <div class="col-md-6">
                 <label for="cargo" class="form-label">Cargo:</label>
                 <input type="text" class="form-control" id="cargo" name="cargo" placeholder="Ex: Chefe da Agência da Receita Federal" required>
@@ -204,6 +222,7 @@
             <label for="corpo-oficio" class="form-label">Corpo do Ofício:</label>
             <textarea class="form-control" id="corpo-oficio" name="corpo_oficio" rows="10" required placeholder="Digite o texto principal do ofício aqui ou use o assistente de IA acima."></textarea>
         </div>
+            
         <div class="col-12 mb-5">
             <button class="btn btn-primary" type="submit">
                 Gerar Ofício
@@ -212,48 +231,10 @@
         </form>
     </div>
 </main>
-<br>            
+
 <footer id="footer" class="bg-body-secondary text-secondary py-4 mt-auto" data-bs-theme="dark">
     <div class="container">
-        <div class="row">
-            <div class="col-md-4 text-center">
-                <a href="https://www.cmvilanovadosmartirios.ma.gov.br/"> 
-                    <img src="{{ url_for('static', filename='img/logo.png') }}" width="45" alt="logo da camara" class="mb-3">
-                </a>
-                <p>
-                <small> 
-                    Desenvolvido pela <a href="https://www.cmvilanovadosmartirios.ma.gov.br/">Câmara Municipal de Vila Nova dos Martírios</a> em software livre e aberto.
-                </small>
-            </div>
-            <div class="col-md-4 text-center">
-                <a href="https://creativecommons.org/licenses/by/4.0/">
-                    <img src="{{ url_for('static', filename='img/logo_cc.png') }}" alt="logo-created-commons" class="mb-3">
-                </a>
-                <p>
-                    <small>Conteúdo e dados sob licença <a href="https://creativecommons.org/">Creative Commons</a> 4.0 <br>
-                    <a href="https://creativecommons.org/licenses/by/4.0/">Atribuir Fonte - Compartilhar Igual</a>
-                    </small>
-                </p>
-            </div>
-            <div class="col-md-4 text-center">   
-                  <strong>
-                    <br><small class="text-muted">Câmara Municipal de Vila Nova dos Martírios</small>
-                  </strong>
-                  <br>
-                  <small class="street-address">Av. Rio Branco s/nº, Centro</small>
-                  <br>
-                <small class="postal-code">CEP: 65924-000</small>
-                  |
-                  <small>Telefone: (99) 8491-5668</small>
-                  <br>
-                  <small>
-                    <a href="https://sapl.vilanovadosmartirios.ma.leg.br/">SAPL</a> |
-                    <a href="https://www.cmvilanovadosmartirios.ma.gov.br/" class="url">Site</a> |
-                    <a href="mailto:cmvnmartirios@hotmail.com" class="email">Fale Conosco</a>
-                  </small>
-                
-            </div>
-        </div>  
+        <!-- Conteúdo do rodapé -->
     </div>  
 </footer>
 
@@ -271,7 +252,6 @@ document.getElementById('btn-gerar-ia').addEventListener('click', async () => {
         return;
     }
 
-    // Feedback visual
     spinner.style.display = 'inline-block';
     btn.disabled = true;
     corpoTextarea.value = "Gerando texto com a Inteligência Artificial, por favor aguarde...";
@@ -284,9 +264,7 @@ document.getElementById('btn-gerar-ia').addEventListener('click', async () => {
             },
             body: JSON.stringify({ topico: topico }),
         });
-
         const data = await response.json();
-
         if (response.ok) {
             corpoTextarea.value = data.corpo_oficio;
         } else {
@@ -296,15 +274,32 @@ document.getElementById('btn-gerar-ia').addEventListener('click', async () => {
         console.error('Erro na requisição:', error);
         corpoTextarea.value = 'Erro de comunicação com o servidor. Verifique o console para mais detalhes.';
     } finally {
-        // Restaura o botão
         spinner.style.display = 'none';
         btn.disabled = false;
+    }
+});
+
+// Lógica para Autoria Conjunta
+const conjuntaCheck = document.getElementById('conjuntaCheck');
+const autoresDiv = document.getElementById('autores-div');
+const vereadorSelect = document.getElementById('vereador');
+const vereadorLabel = document.querySelector('label[for="vereador"]');
+
+conjuntaCheck.addEventListener('change', function() {
+    if (this.checked) {
+        autoresDiv.style.display = 'block';
+        vereadorSelect.style.display = 'none';
+        vereadorLabel.style.display = 'none';
+        vereadorSelect.required = false;
+    } else {
+        autoresDiv.style.display = 'none';
+        vereadorSelect.style.display = 'block';
+        vereadorLabel.style.display = 'block';
+        vereadorSelect.required = true;
     }
 });
 </script>
 </body>
 </html>
-
-<!-- Soli Deo Gloria -->
 
 
