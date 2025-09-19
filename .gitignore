@@ -5,6 +5,7 @@ venv/
 env/
 env.bak/
 venv.bak/
+*.env
 
 Cache e arquivos compilados do Python
 São arquivos temporários que o Python cria para otimizar a execução.
