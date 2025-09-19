@@ -51,7 +51,10 @@ VEREADORES = {
 
 # --- FUNÇÃO AUXILIAR ---
 def definir_tratamento(cargo):
+    """Define o vocativo correto com base no cargo."""
     cargo_lower = cargo.lower()
+    
+    # Listas de palavras-chave
     cargos_excelentissimo = [
         'prefeito', 'prefeita', 'governador', 'governadora', 'presidente', 
         'juiz', 'juíza', 'deputado', 'deputada', 'senador', 'senadora', 
@@ -61,19 +64,21 @@ def definir_tratamento(cargo):
         'prefeita', 'governadora', 'presidenta', 'juíza', 'deputada', 
         'senadora', 'ministra', 'secretária', 'vereadora', 'diretora', 'gerente'
     ]
-    tratamento = "Ao Ilmo. Sr."
-    vocativo = "Senhor"
-    for termo in cargos_excelentissimo:
-        if termo in cargo_lower:
-            tratamento = "Ao Exmo. Sr."
-            vocativo = "Excelentíssimo Senhor"
-            break
-    for termo in palavras_femininas:
-        if termo in cargo_lower:
-            tratamento = tratamento.replace("Ao", "À").replace("Sr.", "Sra.")
-            vocativo = vocativo.replace("Senhor", "Senhora")
-            break
-    return f"{tratamento} {vocativo}"
+
+    is_excelentissimo = any(termo in cargo_lower for termo in cargos_excelentissimo)
+    is_feminino = any(termo in cargo_lower for termo in palavras_femininas)
+
+    # Constrói o vocativo correto
+    if is_excelentissimo:
+        if is_feminino:
+            return "Excelentíssima Senhora"
+        else:
+            return "Excelentíssimo Senhor"
+    else:  # Ilustríssimo
+        if is_feminino:
+            return "Ilustríssima Senhora"
+        else:
+            return "Ilustríssimo Senhor"
 
 # Cabeçalho e Rodapé
 def cabecalho(canvas, doc):
