@@ -145,7 +145,7 @@ def gerar_oficio_livre(dados, nome_arquivo):
     story.append(Spacer(1, 1.5 * cm))
 
     # Desfecho
-    story.append(Paragraph("Atenciosamente,", normal_centralizado))
+    story.append(Paragraph("Atenciosamente,", normal_justificado))
     story.append(Spacer(1, 1.5 * cm))
 
     # Assinatura
