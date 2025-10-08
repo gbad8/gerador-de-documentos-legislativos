@@ -1,3 +1,4 @@
 # Saídas de compilação (os arquivos gerados pelo seu código)
 **/[Bb]in/
 **/[Oo]bj/
+.vscode/
