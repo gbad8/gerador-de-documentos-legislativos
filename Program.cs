@@ -4,5 +4,7 @@ DateTime todaysDate = DateTime.Now;
 string dateForImpression = todaysDate.ToString("d 'de' MMMM 'de' yyyy");
 
 Indicacao indicacaoTeste = new Indicacao();
-indicacaoTeste.PropositionNumber = 63;
+
+Console.WriteLine("Digite o número da indicação:");
+indicacaoTeste.PropositionNumber = Convert.ToInt32(Console.ReadLine());
 indicacaoTeste.PrintPdf();
