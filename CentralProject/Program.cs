@@ -1,4 +1,4 @@
-﻿using GeradorDeDocumentosLegislativos.Models;
+﻿using ClassesCommon.Models;
 bool showMenu = true;
 string? userOption;
 
