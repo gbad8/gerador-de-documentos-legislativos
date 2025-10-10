@@ -1,6 +1,6 @@
 ﻿using GeradorDeDocumentosLegislativos.Models;
 bool showMenu = true;
-string userOption;
+string? userOption;
 
 while (showMenu)
 {
