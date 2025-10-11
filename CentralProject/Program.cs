@@ -68,6 +68,3 @@ while (showMenu)
 }
 
 Console.WriteLine("Programa encerrado!");
-
-
-
