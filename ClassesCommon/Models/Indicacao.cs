@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-// #pragma warning disable IDE0130 // Namespace does not match folder structure
 namespace ClassesCommon.Models
-// #pragma warning restore IDE0130 // Namespace does not match folder structure
 {
     public class Indicacao
     {
-        public int LetterNumber { get; set; }
+        public int LetterNumber
+        {
+            get;
+            set;
+        }
         public DateOnly ApprovalDate { get; set; }
         public int PropositionNumber { get; set; }
         public string Subject { get; set; } = string.Empty;
