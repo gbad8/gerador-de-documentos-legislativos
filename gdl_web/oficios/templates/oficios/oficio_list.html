@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Ofícios{% endblock %}
+
+{% block extra_css %}
+<style>
+    .clickable-row {
+        cursor: pointer;
+        transition: background-color 0.15s ease-in-out;
+    }
+    .clickable-row:hover {
+        background-color: rgba(0, 0, 0, 0.04) !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0 text-gdl-blue">Ofícios</h2>
+        <a href="{% url 'oficios:create' %}" class="btn btn-primary rounded-pill px-4 shadow-sm">Novo Ofício</a>
+    </div>
+
+    <div class="card-painel p-4 mb-4">
+
+    {# ── Busca HTMX ── #}
+    <div class="mb-4">
+        <input type="search"
+               name="q"
+               class="form-control"
+               placeholder="Buscar por assunto..."
+               hx-get="{% url 'oficios:search' %}"
+               hx-trigger="input changed delay:300ms, search"
+               hx-target="#resultados"
+               hx-indicator="#spinner">
+        <div id="spinner" class="htmx-indicator text-center mt-2">
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Buscando...</span>
+            </div>
+        </div>
+    </div>
+
+    {# ── Resultados ── #}
+    <div id="resultados" class="mb-2">
+        {% include "oficios/_search_results.html" %}
+    </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Delegação de evento para lidar com linhas clicáveis (inclusive após carregamento HTMX)
+        document.body.addEventListener('click', function(e) {
+            const row = e.target.closest('.clickable-row');
+            if (!row) return;
+
+            // Não redireciona se o clique for em um link ou botão dentro da linha
+            const isAction = e.target.tagName === 'A' || 
+                             e.target.tagName === 'BUTTON' || 
+                             e.target.closest('a') || 
+                             e.target.closest('button');
+
+            if (!isAction && row.dataset.href) {
+                window.location = row.dataset.href;
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Meu Perfil — GDL{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card-painel mb-4">
+                <div class="card-header bg-white border-0 pt-4 pb-0">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-primary text-white rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background-color: var(--gdl-green) !important;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="h4 mb-0 fw-bold text-gdl-blue">Meu Perfil</h2>
+                            <p class="text-muted small mb-0">Atualize suas informações de acesso e exibição.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <h5 class="mb-3 text-secondary border-bottom pb-2">Dados de Acesso</h5>
+                        <div class="row g-3 mb-4">
+                            <div class="col-12">
+                                <label for="{{ user_form.username.id_for_label }}" class="form-label fw-medium">{{ user_form.username.label }}</label>
+                                {{ user_form.username }}
+                                {% if user_form.username.errors %}
+                                <div class="invalid-feedback d-block">{{ user_form.username.errors.0 }}</div>
+                                {% endif %}
+                                <div class="form-text">Usado para efetuar login no sistema. Não pode conter espaços.</div>
+                            </div>
+                            <div class="col-12">
+                                <label for="{{ user_form.email.id_for_label }}" class="form-label fw-medium">{{ user_form.email.label }}</label>
+                                {{ user_form.email }}
+                                {% if user_form.email.errors %}
+                                <div class="invalid-feedback d-block">{{ user_form.email.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {% if perfil_form %}
+                        <h5 class="mb-3 text-secondary border-bottom pb-2">Informações Profissionais</h5>
+                        <div class="row g-3 mb-4">
+                            <div class="col-12">
+                                <label for="{{ perfil_form.nome.id_for_label }}" class="form-label fw-medium">{{ perfil_form.nome.label }}</label>
+                                {{ perfil_form.nome }}
+                                {% if perfil_form.nome.errors %}
+                                <div class="invalid-feedback d-block">{{ perfil_form.nome.errors.0 }}</div>
+                                {% endif %}
+                                <div class="form-text">Como seu nome aparecerá em relatórios e ofícios (se aplicável).</div>
+                            </div>
+                            <div class="col-12">
+                                <label for="{{ perfil_form.cargo.id_for_label }}" class="form-label fw-medium">{{ perfil_form.cargo.label }}</label>
+                                {{ perfil_form.cargo }}
+                                {% if perfil_form.cargo.errors %}
+                                <div class="invalid-feedback d-block">{{ perfil_form.cargo.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                            <a href="{% url 'home' %}" class="btn btn-outline-secondary rounded-pill px-4 border">Cancelar</a>
+                            <button type="submit" class="btn btn-primary rounded-pill px-4">Salvar Alterações</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

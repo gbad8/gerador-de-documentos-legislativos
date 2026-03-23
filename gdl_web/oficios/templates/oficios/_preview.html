@@ -1,0 +1,69 @@
+<div class="card-painel mb-4">
+    <div class="card-body p-4 p-md-5">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <strong>Número:</strong> {{ oficio.numero }}
+            </div>
+            <div class="col-md-6">
+                <strong>Data:</strong> {{ oficio.data|date:"d/m/Y" }}
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <strong>Autor Principal:</strong> {{ oficio.autor }}
+                {% if oficio.e_conjunto %}
+                <br><strong>Coautores:</strong> 
+                {% for coautor in oficio.coautores.all %}
+                    {{ coautor }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                <strong class="text-gdl-blue">Status:</strong>
+                <span class="badge {% if oficio.status == 'finalizado' %}bg-success bg-opacity-10 text-success{% elif oficio.status == 'modificado' %}bg-warning bg-opacity-10 text-warning{% else %}bg-secondary bg-opacity-10 text-secondary{% endif %} rounded-pill px-3 py-2 ms-2">
+                    {{ oficio.get_status_display }}
+                </span>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <strong>Órgão Emissor:</strong> {{ oficio.orgao|default:"-" }}
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="row mb-3">
+            <div class="col">
+                <strong>Assunto:</strong> {{ oficio.assunto }}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <strong>Destinatário:</strong> {{ oficio.destinatario_nome }}
+            </div>
+            <div class="col-md-4">
+                <strong>Cargo:</strong> {{ oficio.destinatario_cargo|default:"-" }}
+            </div>
+            <div class="col-md-4">
+                <strong>Órgão:</strong> {{ oficio.destinatario_orgao|default:"-" }}
+            </div>
+        </div>
+
+        {% if oficio.destinatario_endereco %}
+        <div class="row mb-3">
+            <div class="col">
+                <strong>Endereço:</strong> {{ oficio.destinatario_endereco }}
+            </div>
+        </div>
+        {% endif %}
+
+        <hr>
+
+        <div class="mb-3">
+            <strong>Corpo do Ofício:</strong>
+            <div class="mt-2 p-3 bg-light border rounded" style="text-align: justify;">{{ oficio.corpo|linebreaks }}</div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,205 @@
+{% extends 'base_public.html' %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="py-5 py-lg-6" style="background: linear-gradient(135deg, var(--gdl-blue) 0%, #153A62 100%); overflow: hidden;">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-5 mb-lg-0 text-center text-lg-start pe-lg-5">
+
+                <h1 class="display-4 fw-black text-white mb-4" style="line-height: 1.1; font-weight: 800; letter-spacing: -1px;">
+                    Gerador de Documentos <br/>
+                    <span class="text-gdl-green">Legislativos</span>
+                </h1>
+                <p class="lead text-white-50 mb-5 pe-lg-5">
+                    A plataforma perfeita para Câmaras Municipais centralizarem a geração de ofícios. Trabalhe de forma colaborativa com sua equipe criando documentos padronizados, com numeração inteligente e totalmente auditáveis.
+                </p>
+                <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center justify-content-lg-start">
+                    <a href="#solicitar" class="btn btn-primary btn-lg rounded-pill px-5 shadow">Solicitar Acesso</a>
+                    <a href="#features" class="btn btn-outline-light btn-lg rounded-pill px-5">Como Funciona</a>
+                </div>
+            </div>
+            <div class="col-lg-6 position-relative">
+                <!-- Mockups (Desktop & Mobile) -->
+                <div class="position-absolute" style="top: -10%; right: -20%; width: 140%; height: 120%; background: radial-gradient(circle, rgba(0,208,132,0.15) 0%, rgba(255,255,255,0) 70%); border-radius: 50%;"></div>
+                <img src="/static/images/mockup_desktop.png" alt="GDL no Computador" class="img-fluid rounded-4 shadow-lg position-relative" style="z-index: 2; border: 4px solid rgba(255,255,255,0.1);">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features / Tudo em um só lugar -->
+<section id="features" class="py-5 bg-white">
+    <div class="container py-5">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="fw-bold mb-3">Tudo em Um Só Lugar</h2>
+                <p class="lead text-muted">Chega de documentos perdidos em HDs externos sem segurança ou auditoria.</p>
+            </div>
+        </div>
+
+        <div class="row g-4 pt-4 mb-3">
+            <!-- Feature 4 (New) -->
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm p-4 text-center rounded-4 hover-lift">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex mx-auto align-items-center justify-content-center mb-4" style="width: 70px; height: 70px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="var(--gdl-green)" class="bi bi-sort-numeric-down" viewBox="0 0 16 16">
+                            <path d="M12.438 1.668V7H11.39V2.684h-.051l-1.211.859v-.969l1.262-.906h1.046z"/>
+                            <path fill-rule="evenodd" d="M11.36 14.098c-1.137 0-1.708-.657-1.762-1.278h1.004c.058.223.343.45.773.45.824 0 1.164-.829 1.133-1.856h-.059c-.148.39-.57.742-1.261.742-.91 0-1.72-.613-1.72-1.758 0-1.148.848-1.835 1.973-1.835 1.09 0 2.063.636 2.063 2.687 0 1.867-.723 2.848-2.145 2.848zm.062-2.735c.504 0 .933-.336.933-.972 0-.633-.398-1.008-.94-1.008-.52 0-.927.375-.927 1 0 .64.418.98.934.98z"/>
+                            <path d="M4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293V2.5z"/>
+                        </svg>
+                    </div>
+                    <h5 class="fw-bold mb-3">Numeração Inteligente</h5>
+                    <p class="text-muted mb-0">Cada ofício recebe uma numeração automática e sequencial por autor, eliminando erros manuais.</p>
+                </div>
+            </div>
+
+            <!-- Feature 5 (New) -->
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm p-4 text-center rounded-4 hover-lift">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex mx-auto align-items-center justify-content-center mb-4" style="width: 70px; height: 70px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="var(--gdl-green)" class="bi bi-people" viewBox="0 0 16 16">
+                            <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8Zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022ZM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816ZM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0Zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"/>
+                        </svg>
+                    </div>
+                    <h5 class="fw-bold mb-3">Acesso Colaborativo</h5>
+                    <p class="text-muted mb-0">Conecte assessores parlamentares, equipe jurídica e secretários em um mesmo ambiente online, facilitando o compartilhamento.</p>
+                </div>
+            </div>
+
+            <!-- Feature 6 (New) -->
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm p-4 text-center rounded-4 hover-lift">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex mx-auto align-items-center justify-content-center mb-4" style="width: 70px; height: 70px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="var(--gdl-green)" class="bi bi-gear" viewBox="0 0 16 16">
+                            <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
+                            <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"/>
+                        </svg>
+                    </div>
+                    <h5 class="fw-bold mb-3">Configuração Sob Medida</h5>
+                    <p class="text-muted mb-0">Molde a plataforma à sua realidade. Configure facilmente os autores, órgãos internos e sessões legislativas da sua casa.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 pt-4">
+            <!-- Feature 1 -->
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm p-4 text-center rounded-4 hover-lift">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex mx-auto align-items-center justify-content-center mb-4" style="width: 70px; height: 70px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="var(--gdl-green)" class="bi bi-folder-check" viewBox="0 0 16 16">
+                            <path d="M11 11a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 1 0v1a.5.5 0 0 1-.5.5M10.828 7.5l-1.5 1.5-1.5-1.5a.5.5 0 0 0-.707.707l1.853 1.854a.5.5 0 0 0 .708 0l1.853-1.854a.5.5 0 0 0-.707-.707z"/>
+                            <path d="m.5 3 .04.87a2 2 0 0 0-.342 1.311l.637 7A2 2 0 0 0 2.826 14H9v-1H2.826a1 1 0 0 1-.995-.91l-.637-7A1 1 0 0 1 2.19 4h11.62a1 1 0 0 1 .996 1.09L14.54 8h1.005l.256-2.819A2 2 0 0 0 13.81 3H9.828a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 6.172 1H2.5a2 2 0 0 0-2 2m5.672-1a1 1 0 0 1 .707.293L7.586 3H2.19c-.24 0-.47.042-.683.12L1.5 2.98a1 1 0 0 1 1-.98z"/>
+                        </svg>
+                    </div>
+                    <h5 class="fw-bold mb-3">Organização centralizada</h5>
+                    <p class="text-muted mb-0">Todos os seus documentos armazenados de forma organizada em um só lugar, oferecendo controle total e centralizado.</p>
+                </div>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm p-4 text-center rounded-4 hover-lift">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex mx-auto align-items-center justify-content-center mb-4" style="width: 70px; height: 70px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="var(--gdl-green)" class="bi bi-file-earmark-check" viewBox="0 0 16 16">
+                            <path d="M10.854 7.854a.5.5 0 0 0-.708-.708L7.5 9.793 6.354 8.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3z"/>
+                            <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"/>
+                        </svg>
+                    </div>
+                    <h5 class="fw-bold mb-3">Padronização Total</h5>
+                    <p class="text-muted mb-0">Cada ofício será gerado com o timbrado oficial da sua Câmara em formato PDF perfeitamente diagramado.</p>
+                </div>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm p-4 text-center rounded-4 hover-lift">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex mx-auto align-items-center justify-content-center mb-4" style="width: 70px; height: 70px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="var(--gdl-green)" class="bi bi-shield-check" viewBox="0 0 16 16">
+                            <path d="M5.338 1.59a61 61 0 0 0-2.837.856.48.48 0 0 0-.328.39c-.554 4.157.726 7.19 2.253 9.188a10.7 10.7 0 0 0 2.287 2.233c.346.244.652.42.893.533q.18.085.293.118a1 1 0 0 0 .214.032 1 1 0 0 0 .214-.032q.113-.033.293-.118c.24-.113.547-.29.893-.533a10.7 10.7 0 0 0 2.287-2.233c1.527-1.997 2.807-5.031 2.253-9.188a.48.48 0 0 0-.328-.39c-.651-.213-1.75-.56-2.837-.855C9.552 1.29 8.531 1.067 8 1.067c-.53 0-1.552.223-2.662.524zM5.072.56C6.157.265 7.31 0 8 0s1.843.265 2.928.56c1.11.3 2.229.655 2.887.87a1.54 1.54 0 0 1 1.044 1.262c.596 4.477-.787 7.795-2.465 9.99a11.8 11.8 0 0 1-2.517 2.453 7 7 0 0 1-1.048.625c-.28.132-.581.24-.829.24s-.548-.108-.829-.24a7 7 0 0 1-1.048-.625 11.8 11.8 0 0 1-2.517-2.453C1.928 10.487.545 7.169 1.141 2.692A1.54 1.54 0 0 1 2.185 1.43 63 63 0 0 1 5.072.56"/>
+                            <path d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
+                        </svg>
+                    </div>
+                    <h5 class="fw-bold mb-3">100% Auditável</h5>
+                    <p class="text-muted mb-0">Saiba imediatamente quais ofícios foram gerados, de quem e para onde estão indo, quando foram gerados e se houve alguma alteração.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Plataforma Gratuita Banner -->
+<section class="py-5" style="background-color: var(--gdl-green);">
+    <div class="container py-4">
+        <div class="row align-items-center">
+            <div class="col-lg-8 text-center text-lg-start mb-4 mb-lg-0">
+                <h2 class="h1 fw-bold text-dark mb-2">Completamente Gratuita.</h2>
+                <p class="h5 fw-normal text-dark mb-0">Democratizamos o acesso à tecnologia legislativa. Custo zero de instalação ou licença.</p>
+            </div>
+            <div class="col-lg-4 text-center text-lg-end">
+                <a href="#solicitar" class="btn btn-dark btn-lg px-5 py-3 rounded-pill fw-bold shadow">Solicitar Acesso Gratuito</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Formulário de Solicitação -->
+<section id="solicitar" class="py-5 bg-light">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center mb-5">
+                <h2 class="fw-bold">Solicite uma conta gratuita para sua instituição</h2>
+                <p class="text-muted">Preencha os dados abaixo e entraremos em contato para configurar o ambiente exclusivo para sua instituição.</p>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-lg rounded-4 p-4 p-md-5">
+                    <form method="post" action="{% url 'landing:index' %}">
+                        {% csrf_token %}
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <label for="{{ form.nome_camara.id_for_label }}" class="form-label fw-semibold text-gdl-blue">Nome da Instituição</label>
+                                {{ form.nome_camara }}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.nome_solicitante.id_for_label }}" class="form-label fw-semibold text-gdl-blue">Seu Nome</label>
+                                {{ form.nome_solicitante }}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.cargo_solicitante.id_for_label }}" class="form-label fw-semibold text-gdl-blue">Seu Cargo</label>
+                                {{ form.cargo_solicitante }}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.email.id_for_label }}" class="form-label fw-semibold text-gdl-blue">E-mail Corporativo</label>
+                                {{ form.email }}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.telefone.id_for_label }}" class="form-label fw-semibold text-gdl-blue">Telefone/WhatsApp</label>
+                                {{ form.telefone }}
+                            </div>
+                            <div class="col-12 text-center mt-5">
+                                <button type="submit" class="btn btn-gdl-blue w-100 py-3 rounded-pill fw-bold" style="background-color: var(--gdl-blue); color: white; font-size: 1.1rem;">
+                                    Enviar Solicitação
+                                </button>
+                                <p class="small text-muted mt-3">Ao solicitar o acesso, você concorda com nossos termos de privacidade.</p>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .hover-lift {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+    }
+</style>
+{% endblock %}

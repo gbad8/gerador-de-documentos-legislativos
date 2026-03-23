@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <title>Ofício {{ oficio.numero }} - Ver. {{ oficio.autor }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 4.5cm 2.5cm 3cm;
+        }
+
+        body {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 12pt;
+            line-height: 1.3;
+            color: #000;
+        }
+
+        .header {
+            position: fixed;
+            top: -3.5cm;
+            left: 0;
+            right: 0;
+            text-align: center;
+            border-bottom: 1px solid #000;
+            padding-bottom: 0.8cm;
+            height: 3cm;
+        }
+
+        .header h2 {
+            font-size: 10pt;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .header p {
+            font-size: 10pt;
+            margin: 0;
+            color: #555;
+        }
+
+        .oficio-numero {
+            text-align: left;
+            margin-bottom: 0.5cm;
+        }
+
+        .oficio-orgao {
+            text-align: right;
+            margin-bottom: 0.5cm;
+            margin-top: 0.5cm;
+        }
+
+        .data-assinatura {
+            text-align: right;
+            margin-bottom: 1cm;
+            font-family: "Times New Roman", Times, serif;
+            font-size: 12pt;
+        }
+
+        .destinatario {
+            margin-bottom: 1cm;
+            line-height: 1.15;
+        }
+
+        .corpo {
+            text-align: justify;
+            margin-bottom: 1cm;
+        }
+
+        .corpo p {
+            text-align: justify;
+        }
+
+        .assinatura {
+            text-align: center;
+            padding-top: 3cm;
+        }
+
+        .assinatura-primeira {
+            text-align: center;
+            padding-top: 2cm;
+        }
+
+        .assinatura-linha {
+            border-top: 1px solid #000;
+            width: 7cm;
+            margin: 0 auto 0.1cm auto;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: -2.3cm;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 8pt;
+            color: #000;
+            border-top: 1px solid #000;
+            padding-top: 0.3cm;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        {% if camara.logomarca_base64 %}
+        <img src="data:image/png;base64,{{ camara.logomarca_base64 }}" style="max-height: 70px; margin-bottom: 10px;" />
+        {% endif %}
+        <h2>Estado {{ camara.preposicao_estado }} {{ camara.get_estado_display }}</h2>
+        <h2> PODER LEGISLATIVO</h2>
+        <h2>{{ camara.nome }}</h2>
+    </div>
+
+    {% if oficio.orgao %}
+    <div class="oficio-orgao">
+        <strong>{{ oficio.orgao.nome }}</strong>
+    </div>
+    {% endif %}
+
+    <div class="oficio-numero">
+        <strong>Ofício nº {{ oficio.numero }}</strong>
+    </div>
+
+    <div class="data-assinatura">
+        {{ camara.cidade|default:camara.endereco }}, {{ oficio.data|date:"d \d\e F \d\e Y" }}.
+    </div>
+
+    <div class="destinatario">
+        <p>
+            {{ oficio.destinatario_pronome }}<br>
+            <strong>{{ oficio.destinatario_nome }}</strong><br>
+            <i>{% if oficio.destinatario_cargo %}{{ oficio.destinatario_cargo }}<br>{% endif %}
+                {% if oficio.destinatario_orgao %}{{ oficio.destinatario_orgao }}<br>{% endif %}
+                {% if oficio.destinatario_endereco %}{{ oficio.destinatario_endereco }}{% endif %}</i>
+        </p>
+    </div>
+
+    <p><strong>ASSUNTO: {{ oficio.assunto|upper }}</strong></p>
+
+    <div class="corpo">
+        {{ oficio.corpo|linebreaks }}
+    </div>
+
+    <div class="fechamento" style="page-break-inside: avoid;">
+        <p>Atenciosamente,</p>
+
+        {% for autor_oficio in oficio.autores_ordenados %}
+        {% if forloop.first %}
+        <div class="assinatura-primeira" style="page-break-inside: avoid;">
+            <div class="assinatura-linha"></div>
+            <strong>{{ autor_oficio }}</strong><br>
+            <i>{{ autor_oficio.get_cargo_display }}</i>
+        </div>
+    </div>
+    {% else %}
+    <div class="assinatura" style="page-break-inside: avoid;">
+        <div class="assinatura-linha"></div>
+        <strong>{{ autor_oficio }}</strong><br>
+        <i>{{ autor_oficio.get_cargo_display }}</i>
+    </div>
+    {% endif %}
+    {% endfor %}
+
+    <div class="footer">
+        {{ camara.nome }}{% if camara.cnpj %} — CNPJ: {{ camara.cnpj }}{% endif %}<br>
+        {{ camara.endereco|default:"" }}{% if camara.cep %} — CEP: {{ camara.cep }}{% endif %}
+        {% if camara.telefone %} — Tel: {{ camara.telefone }}{% endif %}
+        {% if camara.email %} — E-mail: {{ camara.email }}{% endif %}
+    </div>
+</body>
+
+</html>
