@@ -2,6 +2,9 @@
 
 O **GDL (Gerador de Documentos Legislativos)** é uma aplicação web desenvolvida para facilitar a criação, o gerenciamento e a emissão de documentos oficiais (como ofícios) em Câmaras Municipais e outros órgãos do Poder Legislativo. O sistema centraliza a produção de documentos, padroniza a formatação e automatiza a numeração, garantindo maior controle e eficiência administrativa.
 
+<img width="2954" height="1408" alt="demo_gdl" src="https://github.com/user-attachments/assets/2f242108-9b21-4352-8120-c8c3b7adf768" />
+
+
 ## Funcionalidades Principais
 
 *   **Gestão Completa de Ofícios**: Criação, formatação e acompanhamento do ciclo de vida dos documentos. O sistema gerencia automaticamente o status do ofício (RASCUNHO, FINALIZADO, MODIFICADO) com base no preenchimento de seus campos.
