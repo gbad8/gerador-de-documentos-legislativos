@@ -152,3 +152,7 @@ cython_debug/
 
 # VS Code
 .vscode/
+
+# .NET Core
+bin/
+obj/
