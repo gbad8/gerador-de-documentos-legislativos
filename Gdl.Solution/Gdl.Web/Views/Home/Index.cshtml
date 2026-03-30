@@ -1,8 +1,109 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@{
+    ViewData["Title"] = "Início";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <!-- Ofícios -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card-painel h-100 p-3 hover-lift position-relative">
+                <div class="card-body text-center d-flex flex-column justify-content-center py-4">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex mx-auto align-items-center justify-content-center mb-4" style="width: 70px; height: 70px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="var(--gdl-green)" class="bi bi-file-earmark-text" viewBox="0 0 16 16">
+                            <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z"/>
+                            <path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5L9.5 0zm0 1v2.5a1 1 0 0 0 1 1H13v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
+                        </svg>
+                    </div>
+                    <h5 class="fw-bold text-gdl-blue mb-3">Ofícios</h5>
+                    <p class="card-text text-muted small mb-4">Crie, edite e gere ofícios em PDF com timbrado oficial da Câmara.</p>
+                    <a asp-controller="Oficios" asp-action="Index" class="btn btn-outline-primary rounded-pill mt-auto stretched-link text-decoration-none">Acessar Ofícios</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Indicações -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card-painel h-100 p-3 hover-lift position-relative">
+                <div class="card-body text-center d-flex flex-column justify-content-center py-4">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex mx-auto align-items-center justify-content-center mb-4" style="width: 70px; height: 70px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="var(--gdl-green)" class="bi bi-file-earmark-text" viewBox="0 0 16 16">
+                            <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z"/>
+                            <path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5L9.5 0zm0 1v2.5a1 1 0 0 0 1 1H13v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
+                        </svg>
+                    </div>
+                    <h5 class="fw-bold text-gdl-blue mb-3">Indicações</h5>
+                    <p class="card-text text-muted small mb-4">Em breve: Modulo para criação e gestão de indicações legislativas.</p>
+                    <a href="#" class="btn btn-outline-primary rounded-pill mt-auto stretched-link text-decoration-none">Acessar Indicações</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Requerimentos -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card-painel h-100 p-3 hover-lift position-relative">
+                <div class="card-body text-center d-flex flex-column justify-content-center py-4">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex mx-auto align-items-center justify-content-center mb-4" style="width: 70px; height: 70px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="var(--gdl-green)" class="bi bi-file-earmark-text" viewBox="0 0 16 16">
+                            <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z"/>
+                            <path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5L9.5 0zm0 1v2.5a1 1 0 0 0 1 1H13v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
+                        </svg>
+                    </div>
+                    <h5 class="fw-bold text-gdl-blue mb-3">Requerimentos</h5>
+                    <p class="card-text text-muted small mb-4">Em breve: Modulo para criação e encaminhamento de requerimentos.</p>
+                    <a href="#" class="btn btn-outline-primary rounded-pill mt-auto stretched-link text-decoration-none">Acessar Requerimentos</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Portarias -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card-painel h-100 p-3 hover-lift position-relative">
+                <div class="card-body text-center d-flex flex-column justify-content-center py-4">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex mx-auto align-items-center justify-content-center mb-4" style="width: 70px; height: 70px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="var(--gdl-green)" class="bi bi-file-earmark-text" viewBox="0 0 16 16">
+                            <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z"/>
+                            <path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5L9.5 0zm0 1v2.5a1 1 0 0 0 1 1H13v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
+                        </svg>
+                    </div>
+                    <h5 class="fw-bold text-gdl-blue mb-3">Portarias</h5>
+                    <p class="card-text text-muted small mb-4">Em breve: Gestão centralizada para emissão de portarias.</p>
+                    <a href="#" class="btn btn-outline-primary rounded-pill mt-auto stretched-link text-decoration-none">Acessar Portarias</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pareceres -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card-painel h-100 p-3 hover-lift position-relative">
+                <div class="card-body text-center d-flex flex-column justify-content-center py-4">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex mx-auto align-items-center justify-content-center mb-4" style="width: 70px; height: 70px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="var(--gdl-green)" class="bi bi-file-earmark-text" viewBox="0 0 16 16">
+                            <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z"/>
+                            <path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5L9.5 0zm0 1v2.5a1 1 0 0 0 1 1H13v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
+                        </svg>
+                    </div>
+                    <h5 class="fw-bold text-gdl-blue mb-3">Pareceres</h5>
+                    <p class="card-text text-muted small mb-4">Em breve: Acompanhe e registre os pareceres legislativos pertinentes.</p>
+                    <a href="#" class="btn btn-outline-primary rounded-pill mt-auto stretched-link text-decoration-none">Acessar Pareceres</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Projetos de Lei -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card-painel h-100 p-3 hover-lift position-relative">
+                <div class="card-body text-center d-flex flex-column justify-content-center py-4">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex mx-auto align-items-center justify-content-center mb-4" style="width: 70px; height: 70px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="var(--gdl-green)" class="bi bi-file-earmark-text" viewBox="0 0 16 16">
+                            <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z"/>
+                            <path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5L9.5 0zm0 1v2.5a1 1 0 0 0 1 1H13v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
+                        </svg>
+                    </div>
+                    <h5 class="fw-bold text-gdl-blue mb-3">Projetos de Lei</h5>
+                    <p class="card-text text-muted small mb-4">Em breve: Cadastro, andamento e armazenamento de projetos de lei.</p>
+                    <a href="#" class="btn btn-outline-primary rounded-pill mt-auto stretched-link text-decoration-none">Acessar Projetos</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
