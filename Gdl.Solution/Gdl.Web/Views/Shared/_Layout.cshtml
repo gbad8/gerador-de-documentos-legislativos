@@ -67,7 +67,7 @@
                   <li><a class="dropdown-item" href="#">Configurações</a></li>
                   <li><hr class="dropdown-divider"></li>
                   <li>
-                    <form method="post" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" class="m-0 p-0">
+                    <form method="post" asp-controller="Account" asp-action="Logout" class="m-0 p-0">
                       <button type="submit" class="dropdown-item w-100 text-start text-danger">Sair</button>
                     </form>
                   </li>
