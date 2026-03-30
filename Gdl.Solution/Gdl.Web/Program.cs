@@ -1,7 +1,33 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Gdl.Web.Infrastructure.Data;
+using Gdl.Web.Infrastructure.Multitenancy;
+using Gdl.Web.Modules.Identity.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// --- GDL Configs & Injections ---
+// 1. Acesso ao HttpContext para leitura do Tenant (CamaraId) logado
+builder.Services.AddHttpContextAccessor();
+
+// 2. Serviço de Tenant para o Global Query Filter
+builder.Services.AddScoped<ITenantService, TenantService>();
+
+// 3. Configuração do EF Core e PostgreSQL
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// 4. Configuração do Identity
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => 
+{
+    options.SignIn.RequireConfirmedAccount = false;
+})
+.AddEntityFrameworkStores<AppDbContext>()
+.AddDefaultTokenProviders();
+// --------------------------------
 
 var app = builder.Build();
 
@@ -16,6 +42,8 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+// Middleware de Autenticação obrigatório antes do de Autorização
+app.UseAuthentication(); 
 app.UseAuthorization();
 
 app.MapStaticAssets();
@@ -24,6 +52,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
-
 
 app.Run();
