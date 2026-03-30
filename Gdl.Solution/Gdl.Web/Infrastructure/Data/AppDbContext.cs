@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Gdl.Web.Modules.Camaras.Models;
 using Gdl.Web.Modules.Identity.Models;
+using Gdl.Web.Modules.Orgaos.Models;
 using Gdl.Web.Infrastructure.Multitenancy;
 
 namespace Gdl.Web.Infrastructure.Data
@@ -19,6 +20,7 @@ namespace Gdl.Web.Infrastructure.Data
         }
 
         public DbSet<Camara> Camaras => Set<Camara>();
+        public DbSet<Orgao> Orgaos => Set<Orgao>();
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -38,6 +40,9 @@ namespace Gdl.Web.Infrastructure.Data
             // Ignorar tenant filtrado quando CamaraId for 0 (rotinas super admin/sistemas)
             builder.Entity<ApplicationUser>()
                 .HasQueryFilter(u => _tenantService.CurrentCamaraId == 0 || u.CamaraId == _tenantService.CurrentCamaraId);
+
+            builder.Entity<Orgao>()
+                .HasQueryFilter(o => _tenantService.CurrentCamaraId == 0 || o.CamaraId == _tenantService.CurrentCamaraId);
 
             // Relacionamento Usuario -> Camara
             builder.Entity<ApplicationUser>()
