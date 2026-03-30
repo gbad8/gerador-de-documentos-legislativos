@@ -1,50 +1,137 @@
-﻿<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Gdl.Web</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Gdl.Web.styles.css" asp-append-version="true" />
-</head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Gdl.Web</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+@using Gdl.Web.Infrastructure.Multitenancy
+@using Gdl.Web.Infrastructure.Data
+@using Microsoft.AspNetCore.Identity
+@using Gdl.Web.Modules.Identity.Models
+@inject ITenantService TenantService
+@inject AppDbContext DbContext
+@inject SignInManager<ApplicationUser> SignInManager
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - Gdl.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+@{
+    var camaraId = TenantService.CurrentCamaraId;
+    var camara = camaraId > 0 ? await DbContext.Camaras.FindAsync(camaraId) : null;
+    var camaraNome = camara?.Nome ?? "Câmara Municipal";
+}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GDL - @(SignInManager.IsSignedIn(User) && camara != null ? camara.Nome : ViewData["Title"] ?? "Gerador de Documentos Legislativos")</title>
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+  <link rel="stylesheet" href="~/css/gdl.css" asp-append-version="true">
+  <link rel="stylesheet" href="~/Gdl.Web.styles.css" asp-append-version="true" />
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" href="~/images/favicon-96x96.png" sizes="96x96">
+  <link rel="icon" type="image/svg+xml" href="~/images/favicon.svg">
+  <link rel="shortcut icon" href="~/images/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="~/images/apple-touch-icon.png">
+  <link rel="manifest" href="~/images/site.webmanifest">
+
+  @await RenderSectionAsync("Styles", required: false)
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+
+  @if (SignInManager.IsSignedIn(User))
+  {
+      <nav class="navbar fixed-top navbar-expand-lg bg-white border-bottom shadow-sm">
+        <div class="container-fluid">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link fw-medium px-3 text-gdl-blue" asp-controller="Home" asp-action="Index">Início</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link fw-medium px-3 text-gdl-blue" href="#">Autores</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link fw-medium px-3 text-gdl-blue" href="#">Configurações</a>
+              </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle d-flex align-items-center text-gdl-blue" href="#" id="userDropdown"
+                  role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" aria-labelledby="userDropdown">
+                  <li><a class="dropdown-item" href="#">Perfil</a></li>
+                  <li><a class="dropdown-item" href="#">Configurações</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li>
+                    <form method="post" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" class="m-0 p-0">
+                      <button type="submit" class="dropdown-item w-100 text-start text-danger">Sair</button>
+                    </form>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
         </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+      </nav>
+      <br><br>
+  }
+
+  <!-- Cabeçalho com logo -->
+  <header class="masthead mb-4 mt-3">
+    <div class="container">
+      <div class="card-painel p-3 px-4 d-flex align-items-center justify-content-between">
+        <a class="text-decoration-none d-flex align-items-center" asp-controller="Home" asp-action="Index">
+          @if (!string.IsNullOrEmpty(camara?.LogomarcaBase64))
+          {
+            <img class="me-3" src="data:image/png;base64,@(camara.LogomarcaBase64)" alt="logo" width="65" height="auto">
+          }
+          <div class="texto-logo-container m-0">
+            <span class="titulo-cabecalho fw-bold" style="color: var(--gdl-blue);">@camaraNome</span>
+            <span class="texto-pequeno-cabecalho mt-1">Gerador de Documentos Legislativos</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow-1">
+    @RenderBody()
+  </main>
+
+  <footer id="footer" class="bg-gdl-blue text-white pt-4 pb-2 mt-auto" style="font-size: 0.97rem;">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6 mb-4 mb-md-0 d-flex flex-column align-items-center align-items-md-start">
+          <a asp-controller="Home" asp-action="Index">
+            <img src="~/images/logo_gdl.png" alt="Logo GDL" style="height: 36px; filter: brightness(0) invert(1);" class="mb-3">
+          </a>
+          <p class="text-white-50 small mb-0">Gerador de Documentos Legislativos</p>
+          <p class="text-white-50 small mt-2">&copy; @DateTime.Now.Year Software livre e aberto sob licença <a href="https://creativecommons.org/licenses/by/4.0/" class="text-white">Creative Commons 4.0</a>.</p>
+        </div>
+        <div class="col-md-6 text-center text-md-end text-white-50">
+          <strong><small class="text-white">@camaraNome</small></strong><br>
+          @if (camara != null)
+          {
+              <small>@camara.Endereco</small><br>
+              <small>
+                @(string.IsNullOrEmpty(camara.Cep) ? "" : $"CEP: {camara.Cep}")
+                @(!string.IsNullOrEmpty(camara.Cep) && !string.IsNullOrEmpty(camara.Telefone) ? " | " : "")
+                @(string.IsNullOrEmpty(camara.Telefone) ? "" : $"Telefone: {camara.Telefone}")
+              </small>
+          }
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/htmx.org@2.0.4" crossorigin="anonymous"></script>
+  <script src="~/js/site.js" asp-append-version="true"></script>
+  
+  @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
