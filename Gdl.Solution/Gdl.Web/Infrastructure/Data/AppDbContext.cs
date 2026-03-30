@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Gdl.Web.Modules.Camaras.Models;
 using Gdl.Web.Modules.Identity.Models;
 using Gdl.Web.Modules.Orgaos.Models;
+using Gdl.Web.Modules.Autores.Models;
+using Gdl.Web.Modules.Autores.Models.Enums;
 using Gdl.Web.Infrastructure.Multitenancy;
 
 namespace Gdl.Web.Infrastructure.Data
@@ -21,6 +23,7 @@ namespace Gdl.Web.Infrastructure.Data
 
         public DbSet<Camara> Camaras => Set<Camara>();
         public DbSet<Orgao> Orgaos => Set<Orgao>();
+        public DbSet<Autor> Autores => Set<Autor>();
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -43,6 +46,17 @@ namespace Gdl.Web.Infrastructure.Data
 
             builder.Entity<Orgao>()
                 .HasQueryFilter(o => _tenantService.CurrentCamaraId == 0 || o.CamaraId == _tenantService.CurrentCamaraId);
+
+            builder.Entity<Autor>()
+                .HasQueryFilter(a => _tenantService.CurrentCamaraId == 0 || a.CamaraId == _tenantService.CurrentCamaraId);
+
+            // Mapeamento compatível do C# Enum para Varchar(3) no Banco legado do Django (1S e 2S)
+            builder.Entity<Autor>()
+                .Property(a => a.Cargo)
+                .HasConversion(
+                    v => v == CargoAutor.S1 ? "1S" : (v == CargoAutor.S2 ? "2S" : v.ToString()),
+                    v => v == "1S" ? CargoAutor.S1 : (v == "2S" ? CargoAutor.S2 : Enum.Parse<CargoAutor>(v)))
+                .HasMaxLength(3);
 
             // Relacionamento Usuario -> Camara
             builder.Entity<ApplicationUser>()
