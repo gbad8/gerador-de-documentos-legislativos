@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Gdl.Web.Modules.Camaras.Models.Enums;
 
 namespace Gdl.Web.Modules.Camaras.Models
 {
@@ -7,16 +8,15 @@ namespace Gdl.Web.Modules.Camaras.Models
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(200)]
+        [MaxLength(100)]
         public string Nome { get; set; } = string.Empty;
 
         [Required]
-        [MaxLength(200)]
+        [MaxLength(100)]
         public string Cidade { get; set; } = string.Empty;
 
         [Required]
-        [MaxLength(2)]
-        public string Estado { get; set; } = string.Empty; // Poderia ser Enum, mas manteremos string conforme Django
+        public EstadoCamara Estado { get; set; }
 
         [Required]
         [MaxLength(18)]
@@ -25,9 +25,11 @@ namespace Gdl.Web.Modules.Camaras.Models
         public string Endereco { get; set; } = string.Empty;
 
         [MaxLength(9)]
+        [RegularExpression(@"^\d{5}-?\d{3}$", ErrorMessage = "O formato do CEP é inválido.")]
         public string Cep { get; set; } = string.Empty;
 
         [MaxLength(20)]
+        [Phone(ErrorMessage = "O formato do telefone é inválido.")]
         public string Telefone { get; set; } = string.Empty;
 
         [EmailAddress]
@@ -36,16 +38,16 @@ namespace Gdl.Web.Modules.Camaras.Models
         public byte[]? Logomarca { get; set; }
 
         // Propriedades computadas (ReadOnly)
-        public string? LogomarcaBase64 => Logomarca != null 
-            ? Convert.ToBase64String(Logomarca) 
+        public string? LogomarcaBase64 => Logomarca != null
+            ? Convert.ToBase64String(Logomarca)
             : null;
 
-        public string PreposicaoEstado 
+        public string PreposicaoEstado
         {
             get
             {
-                var de = new[] { "AL", "GO", "MT", "MS", "MG", "PE", "SC", "SP", "SE" };
-                var da = new[] { "BA", "PB" };
+                var de = new[] { EstadoCamara.AL, EstadoCamara.GO, EstadoCamara.MT, EstadoCamara.MS, EstadoCamara.MG, EstadoCamara.PE, EstadoCamara.SC, EstadoCamara.SP, EstadoCamara.SE };
+                var da = new[] { EstadoCamara.BA, EstadoCamara.PB };
 
                 if (de.Contains(Estado)) return "de";
                 if (da.Contains(Estado)) return "da";
