@@ -2,7 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
-namespace Gdl.Web.Controllers;
+namespace Gdl.Web.Modules.Home.Controllers;
 
 [Authorize]
 public class HomeController : Controller
