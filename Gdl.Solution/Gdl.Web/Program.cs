@@ -7,7 +7,15 @@ using Gdl.Web.Modules.Identity.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddRazorOptions(options =>
+    {
+        options.ViewLocationFormats.Clear();
+        options.ViewLocationFormats.Add("/Modules/{1}/Views/{0}.cshtml");
+        options.ViewLocationFormats.Add("/Modules/Shared/Views/{0}.cshtml");
+        options.ViewLocationFormats.Add("/Views/{1}/{0}.cshtml");
+        options.ViewLocationFormats.Add("/Views/Shared/{0}.cshtml");
+    });
 
 // --- GDL Configs & Injections ---
 // 1. Acesso ao HttpContext para leitura do Tenant (CamaraId) logado

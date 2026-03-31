@@ -30,7 +30,7 @@ namespace Gdl.Web.Infrastructure.Services
 
             if (viewResult.View == null)
             {
-                // Fallback para caminhos absolutos no MVC (ex: "~/Views/Oficios/Pdf.cshtml")
+                // Fallback para caminhos absolutos no MVC (ex: "~/Modules/Oficios/Views/Pdf.cshtml")
                 viewResult = _razorViewEngine.GetView(executingFilePath: null, viewPath: viewName, isMainPage: false);
             }
 
