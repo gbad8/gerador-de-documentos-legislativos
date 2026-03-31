@@ -13,8 +13,6 @@ builder.Services.AddControllersWithViews()
         options.ViewLocationFormats.Clear();
         options.ViewLocationFormats.Add("/Modules/{1}/Views/{0}.cshtml");
         options.ViewLocationFormats.Add("/Modules/Shared/Views/{0}.cshtml");
-        options.ViewLocationFormats.Add("/Views/{1}/{0}.cshtml");
-        options.ViewLocationFormats.Add("/Views/Shared/{0}.cshtml");
     });
 
 // --- GDL Configs & Injections ---
