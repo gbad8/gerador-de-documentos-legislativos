@@ -3,9 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Gdl.Web.Infrastructure.Data;
 using Gdl.Web.Infrastructure.Multitenancy;
+using Gdl.Web.Infrastructure.Services;
 using Gdl.Web.Modules.Oficios.Models;
 using Gdl.Web.Modules.Oficios.Models.Enums;
 using Gdl.Web.Modules.Oficios.Services;
+using Gdl.Web.Modules.Autores.Models;
+using Gdl.Web.Modules.Orgaos.Models;
 
 namespace Gdl.Web.Modules.Oficios.Controllers
 {
@@ -15,12 +18,16 @@ namespace Gdl.Web.Modules.Oficios.Controllers
         private readonly AppDbContext _context;
         private readonly ITenantService _tenantService;
         private readonly INumeracaoService _numeracaoService;
+        private readonly IViewRenderService _viewRenderService;
+        private readonly IPdfService _pdfService;
 
-        public OficiosController(AppDbContext context, ITenantService tenantService, INumeracaoService numeracaoService)
+        public OficiosController(AppDbContext context, ITenantService tenantService, INumeracaoService numeracaoService, IViewRenderService viewRenderService, IPdfService pdfService)
         {
             _context = context;
             _tenantService = tenantService;
             _numeracaoService = numeracaoService;
+            _viewRenderService = viewRenderService;
+            _pdfService = pdfService;
         }
 
         public async Task<IActionResult> Index()
@@ -191,6 +198,25 @@ namespace Gdl.Web.Modules.Oficios.Controllers
             }
 
             return View("Detail", oficio);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GeneratePdf(int id)
+        {
+            var camaraId = _tenantService.CurrentCamaraId;
+            var oficio = await _context.Oficios
+                .Include(o => o.Autor)
+                .Include(o => o.Orgao)
+                .Include(o => o.Camara)
+                .Include(o => o.Coautores)
+                .FirstOrDefaultAsync(o => o.Id == id && o.CamaraId == camaraId);
+
+            if (oficio == null) return NotFound();
+
+            var htmlContent = await _viewRenderService.RenderToStringAsync("Pdf", oficio);
+            var pdfBytes = await _pdfService.GeneratePdfFromHtmlAsync(htmlContent);
+
+            return File(pdfBytes, "application/pdf", $"Oficio_{oficio.Numero.Replace("/", "_")}.pdf");
         }
 
         private async Task PopulateViewBagsAsync()
