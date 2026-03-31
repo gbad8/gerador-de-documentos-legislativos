@@ -15,6 +15,7 @@ builder.Services.AddHttpContextAccessor();
 
 // 2. Serviço de Tenant para o Global Query Filter
 builder.Services.AddScoped<ITenantService, TenantService>();
+builder.Services.AddScoped<Gdl.Web.Modules.Oficios.Services.INumeracaoService, Gdl.Web.Modules.Oficios.Services.NumeracaoService>();
 
 // 3. Configuração do EF Core e PostgreSQL
 builder.Services.AddDbContext<AppDbContext>(options =>
