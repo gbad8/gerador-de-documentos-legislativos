@@ -48,7 +48,7 @@ body {
 }
 
 .text-gdl-blue {
-    color: var(--gdl-blue);
+    color: var(--gdl-blue) !important;
 }
 
 .bg-gdl-blue {
