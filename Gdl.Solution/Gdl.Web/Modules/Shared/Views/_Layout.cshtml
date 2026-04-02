@@ -44,7 +44,7 @@
           <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
               <li class="nav-item">
-                <a class="nav-link fw-medium px-3 text-gdl-blue" asp-controller="Home" asp-action="Index">Início</a>
+                <a class="nav-link fw-medium px-3 text-gdl-blue" asp-controller="Home" asp-action="Dashboard">Início</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link fw-medium px-3 text-gdl-blue" asp-controller="Autores" asp-action="Index">Autores</a>
@@ -84,7 +84,7 @@
   <header class="masthead mb-4 mt-3">
     <div class="container">
       <div class="card-painel p-3 px-4 d-flex align-items-center justify-content-between">
-        <a class="text-decoration-none d-flex align-items-center" asp-controller="Home" asp-action="Index">
+        <a class="text-decoration-none d-flex align-items-center" asp-controller="Home" asp-action="Dashboard">
           @if (!string.IsNullOrEmpty(camara?.LogomarcaBase64))
           {
             <img class="me-3" src="data:image/png;base64,@(camara.LogomarcaBase64)" alt="logo" width="65" height="auto">

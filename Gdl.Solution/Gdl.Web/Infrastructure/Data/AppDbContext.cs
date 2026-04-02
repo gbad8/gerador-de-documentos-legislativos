@@ -9,6 +9,7 @@ using Gdl.Web.Modules.Autores.Models.Enums;
 using Gdl.Web.Modules.Oficios.Models;
 using Gdl.Web.Modules.Oficios.Models.Enums;
 using Gdl.Web.Infrastructure.Multitenancy;
+using Gdl.Web.Modules.Admin.Models;
 
 namespace Gdl.Web.Infrastructure.Data
 {
@@ -28,6 +29,7 @@ namespace Gdl.Web.Infrastructure.Data
         public DbSet<Autor> Autores => Set<Autor>();
         public DbSet<Oficio> Oficios => Set<Oficio>();
         public DbSet<Numeracao> Numeracoes => Set<Numeracao>();
+        public DbSet<SolicitacaoAcesso> SolicitacoesAcesso => Set<SolicitacaoAcesso>();
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
