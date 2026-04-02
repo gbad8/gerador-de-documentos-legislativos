@@ -12,6 +12,7 @@ builder.Services.AddControllersWithViews()
     {
         options.ViewLocationFormats.Clear();
         options.ViewLocationFormats.Add("/Modules/{1}/Views/{0}.cshtml");
+        options.ViewLocationFormats.Add("/Modules/Identity/Views/{0}.cshtml");
         options.ViewLocationFormats.Add("/Modules/Shared/Views/{0}.cshtml");
     });
 
@@ -35,7 +36,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     options.SignIn.RequireConfirmedAccount = false;
 })
 .AddEntityFrameworkStores<AppDbContext>()
-.AddDefaultTokenProviders();
+.AddDefaultTokenProviders()
+.AddClaimsPrincipalFactory<Gdl.Web.Infrastructure.Identity.CustomUserClaimsPrincipalFactory>();
 // --------------------------------
 
 var app = builder.Build();
