@@ -44,6 +44,7 @@ public class HomeController : Controller
         return View();
     }
 
+    [Route("Dashboard")]
     public IActionResult Dashboard()
     {
         return View();
