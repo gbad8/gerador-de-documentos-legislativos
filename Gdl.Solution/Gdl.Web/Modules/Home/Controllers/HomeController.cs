@@ -2,7 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Gdl.Web.Infrastructure.Data;
-using Gdl.Web.Modules.Admin.Models;
+using Gdl.Web.Modules.Home.Models;
 
 namespace Gdl.Web.Modules.Home.Controllers;
 

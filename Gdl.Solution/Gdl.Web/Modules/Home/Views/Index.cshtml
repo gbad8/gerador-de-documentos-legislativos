@@ -1,3 +1,4 @@
+@model Gdl.Web.Modules.Home.Models.SolicitacaoAcesso
 @{
 Layout = null;
 ViewData["Title"] = "Gerador de Documentos Legislativos";
@@ -346,28 +347,29 @@ ViewData["Title"] = "Gerador de Documentos Legislativos";
         <div class="col-lg-6 offset-lg-1">
           <div class="card-painel p-5 shadow-lg border-0">
             <h4 class="mb-4 text-gdl-blue fw-bold">Solicitar Abertura de Ambiente</h4>
-            <!-- O form chamará Action CriarSolicitacao no HomeController futuramente -->
+            <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
             <form asp-controller="Home" asp-action="SolicitarAcesso" method="post">
               <div class="mb-3">
-                <label class="form-label fw-medium text-secondary">Câmera Municipal (Ex: Câmara M. de
-                  Piracicaba)</label>
-                <input type="text" name="NomeCamara" class="form-control" required
-                  placeholder="Nome do Órgão Legislativo">
+                <label class="form-label fw-medium text-secondary">Câmara Municipal (Ex: Câmara M. de Piracicaba)</label>
+                <input asp-for="NomeCamara" class="form-control" required placeholder="Nome do Órgão Legislativo">
+                <span asp-validation-for="NomeCamara" class="text-danger small"></span>
               </div>
               <div class="row mb-3">
                 <div class="col-md-6">
                   <label class="form-label fw-medium text-secondary">Estado (UF)</label>
-                  <input type="text" name="Estado" class="form-control" placeholder="SP" maxlength="2" required>
+                  <input asp-for="Estado" class="form-control" placeholder="SP" maxlength="2" required>
+                  <span asp-validation-for="Estado" class="text-danger small"></span>
                 </div>
                 <div class="col-md-6">
                   <label class="form-label fw-medium text-secondary">Telefone de Contato</label>
-                  <input type="text" name="Telefone" class="form-control" placeholder="(00) 0000-0000" required>
+                  <input asp-for="Telefone" class="form-control" placeholder="(00) 00000-0000" required>
+                  <span asp-validation-for="Telefone" class="text-danger small"></span>
                 </div>
               </div>
               <div class="mb-4">
-                <label class="form-label fw-medium text-secondary">E-mail do Responsável de TI ou
-                  Administração</label>
-                <input type="email" name="Email" class="form-control" required placeholder="admin@camara.leg.br">
+                <label class="form-label fw-medium text-secondary">E-mail do Responsável de TI ou Administração</label>
+                <input asp-for="Email" class="form-control" required placeholder="admin@camara.leg.br">
+                <span asp-validation-for="Email" class="text-danger small"></span>
               </div>
               <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold text-uppercase"
                 style="letter-spacing: 0.5px;">Enviar Solicitação</button>

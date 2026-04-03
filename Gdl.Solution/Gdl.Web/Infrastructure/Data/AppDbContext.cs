@@ -9,7 +9,7 @@ using Gdl.Web.Modules.Autores.Models.Enums;
 using Gdl.Web.Modules.Oficios.Models;
 using Gdl.Web.Modules.Oficios.Models.Enums;
 using Gdl.Web.Infrastructure.Multitenancy;
-using Gdl.Web.Modules.Admin.Models;
+using Gdl.Web.Modules.Home.Models;
 
 namespace Gdl.Web.Infrastructure.Data
 {

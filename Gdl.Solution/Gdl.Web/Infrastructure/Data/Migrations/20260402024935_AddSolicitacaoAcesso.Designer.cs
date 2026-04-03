@@ -25,7 +25,7 @@ namespace Gdl.Web.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Gdl.Web.Modules.Admin.Models.SolicitacaoAcesso", b =>
+            modelBuilder.Entity("Gdl.Web.Modules.Home.Models.SolicitacaoAcesso", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
