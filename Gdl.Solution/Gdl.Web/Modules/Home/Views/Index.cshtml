@@ -137,7 +137,7 @@ ViewData["Title"] = "Gerador de Documentos Legislativos";
         </div>
         <div class="col-lg-5 offset-lg-1 text-center">
           <!-- Dashboard Preview Graphic -->
-          <div class="card-painel p-3 bg-white text-start shadow-lg"
+          <div class="card-painel p-3 bg-white text-start shadow-lg text-dark"
             style="border-radius: 12px; transform: rotate(2deg);">
             <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
               <div class="fw-bold text-gdl-blue">Últimos Ofícios</div>
@@ -158,7 +158,7 @@ ViewData["Title"] = "Gerador de Documentos Legislativos";
 
   @if (TempData["SuccessMessage"] != null)
   {
-  <div class="container mt-4">
+  <div class="container mt-4" style="position: relative; z-index: 10;">
     <div class="alert alert-success alert-dismissible fade show text-center fw-bold" role="alert">
       @TempData["SuccessMessage"]
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -168,7 +168,7 @@ ViewData["Title"] = "Gerador de Documentos Legislativos";
 
   @if (TempData["ErrorMessage"] != null)
   {
-  <div class="container mt-4">
+  <div class="container mt-4" style="position: relative; z-index: 10;">
     <div class="alert alert-danger alert-dismissible fade show text-center fw-bold" role="alert">
       @TempData["ErrorMessage"]
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -177,12 +177,12 @@ ViewData["Title"] = "Gerador de Documentos Legislativos";
   }
 
   <!-- Features / Tudo em um só lugar -->
-  <section id="funcionalidades" class="py-5 bg-white">
+  <section id="funcionalidades" class="py-5 bg-white" style="position: relative; z-index: 2;">
     <div class="container py-5">
       <div class="row text-center mb-5">
         <div class="col-lg-8 mx-auto">
-          <h2 class="fw-bold mb-3">Feito para o Legislativo</h2>
-          <p class="lead text-muted">Uma solução específica para os problemas do dia a dia da tramitação de processos
+          <h2 class="fw-bold mb-3 text-gdl-blue">Feito para o Legislativo</h2>
+          <p class="lead text-secondary">Uma solução específica para os problemas do dia a dia da tramitação de processos
             legislativos.</p>
         </div>
       </div>
