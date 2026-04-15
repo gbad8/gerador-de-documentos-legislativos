@@ -1,4 +1,0 @@
-<Solution>
-  <Project Path="Gdl.Tests/Gdl.Tests.csproj" />
-  <Project Path="Gdl.Web/Gdl.Web.csproj" />
-</Solution>
