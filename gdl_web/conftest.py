@@ -9,6 +9,16 @@ from core.models import Camara, UsuarioPerfil
 User = get_user_model()
 
 
+@pytest.fixture(autouse=True)
+def _use_default_staticfiles_storage(settings):
+    """Usa o storage padrão do Django nos testes (sem WhiteNoise manifest)."""
+    settings.STORAGES = {
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }
+
+
 @pytest.fixture
 def camara(db):
     """Câmara de teste."""

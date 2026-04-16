@@ -4,7 +4,24 @@ from autores.models import Autor
 from oficios.models import Oficio
 
 
+TIPO_NUMERACAO_CHOICES = [("auto", "Automático"), ("manual", "Manual")]
+
+
 class OficioForm(forms.ModelForm):
+    tipo_numeracao = forms.ChoiceField(
+        choices=TIPO_NUMERACAO_CHOICES,
+        initial="auto",
+        widget=forms.RadioSelect(attrs={"class": "form-check-input"}),
+        label="Numeração",
+    )
+
+    numero_manual = forms.IntegerField(
+        required=False,
+        min_value=1,
+        label="Número do Ofício",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+
     class Meta:
         model = Oficio
         fields = [
@@ -44,6 +61,11 @@ class OficioForm(forms.ModelForm):
             self.fields["autor"].queryset = Autor.objects.for_camara(camara)
             self.fields["coautores"].queryset = Autor.objects.for_camara(camara)
 
+        # Na edição, remover os campos de numeração (número é imutável)
+        if self.instance and self.instance.pk:
+            del self.fields["tipo_numeracao"]
+            del self.fields["numero_manual"]
+
     def clean(self):
         cleaned_data = super().clean()
         e_conjunto = cleaned_data.get("e_conjunto")
@@ -53,5 +75,11 @@ class OficioForm(forms.ModelForm):
         if e_conjunto and autor and coautores:
             if autor in coautores:
                 self.add_error("coautores", "O autor principal não pode estar na lista de coautores.")
-        
+
+        # Validar numeração manual
+        tipo_numeracao = cleaned_data.get("tipo_numeracao")
+        if tipo_numeracao == "manual" and not cleaned_data.get("numero_manual"):
+            self.add_error("numero_manual", "Informe o número do ofício.")
+
         return cleaned_data
+

@@ -19,6 +19,27 @@
             <div class="col-auto">
                 <input type="text" class="form-control" value="{{ form.instance.numero }}" disabled>
             </div>
+            {% else %}
+            <div class="col-auto">
+                <label class="col-form-label fw-medium">Numeração:</label>
+            </div>
+            {% for radio in form.tipo_numeracao %}
+            <div class="col-auto">
+                <div class="form-check form-check-inline">
+                    {{ radio.tag }}
+                    <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                </div>
+            </div>
+            {% endfor %}
+            <div id="numero-manual-container" class="col-auto" style="display: none;">
+                <label for="{{ form.numero_manual.id_for_label }}" class="visually-hidden">Número do Ofício</label>
+                {{ form.numero_manual }}
+            </div>
+            {% if form.numero_manual.errors %}
+            <div class="col-12">
+                <div class="text-danger small">{{ form.numero_manual.errors }}</div>
+            </div>
+            {% endif %}
             {% endif %}
             <div class="col-auto">
                 <label for="{{ form.data.id_for_label }}" class="col-form-label">Data:</label>
@@ -120,6 +141,7 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Toggle coautores
         const switchConjunto = document.getElementById('{{ form.e_conjunto.id_for_label }}');
         const containerCoautores = document.getElementById('coautores-container');
 
@@ -133,8 +155,28 @@
 
         if (switchConjunto && containerCoautores) {
             switchConjunto.addEventListener('change', toggleCoautores);
-            toggleCoautores(); // Run on load
+            toggleCoautores();
         }
+
+        // Toggle número manual
+        const containerNumeroManual = document.getElementById('numero-manual-container');
+        const radiosNumeracao = document.querySelectorAll('input[name="tipo_numeracao"]');
+
+        function toggleNumeroManual() {
+            if (!containerNumeroManual) return;
+            const selected = document.querySelector('input[name="tipo_numeracao"]:checked');
+            if (selected && selected.value === 'manual') {
+                containerNumeroManual.style.display = 'block';
+            } else {
+                containerNumeroManual.style.display = 'none';
+            }
+        }
+
+        radiosNumeracao.forEach(function(radio) {
+            radio.addEventListener('change', toggleNumeroManual);
+        });
+        toggleNumeroManual();
     });
 </script>
 {% endblock %}
+

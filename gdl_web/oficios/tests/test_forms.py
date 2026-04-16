@@ -10,6 +10,7 @@ class TestOficioForm:
     @pytest.fixture
     def dados_validos(self, autor):
         return {
+            "tipo_numeracao": "auto",
             "autor": autor.pk,
             "assunto": "Solicitação de melhorias",
             "corpo": "Venho por meio deste solicitar...",
@@ -53,3 +54,21 @@ class TestOficioForm:
         queryset = form.fields["autor"].queryset
         assert autor in queryset
         assert autor_outra not in queryset
+
+    def test_form_com_numero_manual_valido(self, camara, dados_validos):
+        dados_validos["tipo_numeracao"] = "manual"
+        dados_validos["numero_manual"] = 10
+        form = OficioForm(data=dados_validos, camara=camara)
+        assert form.is_valid(), form.errors
+
+    def test_form_manual_sem_numero_erro(self, camara, dados_validos):
+        dados_validos["tipo_numeracao"] = "manual"
+        # numero_manual omitido
+        form = OficioForm(data=dados_validos, camara=camara)
+        assert not form.is_valid()
+        assert "numero_manual" in form.errors
+
+    def test_form_auto_sem_numero_ok(self, camara, dados_validos):
+        dados_validos["tipo_numeracao"] = "auto"
+        form = OficioForm(data=dados_validos, camara=camara)
+        assert form.is_valid(), form.errors

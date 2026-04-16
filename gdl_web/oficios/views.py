@@ -21,9 +21,22 @@ def oficio_create(request):
         if form.is_valid():
             oficio = form.save(commit=False)
             oficio.camara = request.camara
-            oficio.numero = NumeracaoService.proximo_numero(
-                request.camara, oficio.orgao, oficio.autor
-            )
+            numero_manual = form.cleaned_data.get("numero_manual")
+            tipo_numeracao = form.cleaned_data.get("tipo_numeracao")
+
+            if tipo_numeracao == "manual":
+                try:
+                    oficio.numero = NumeracaoService.registrar_numero_manual(
+                        request.camara, oficio.orgao, oficio.autor, numero_manual
+                    )
+                except ValueError as e:
+                    form.add_error("numero_manual", str(e))
+                    return render(request, "oficios/oficio_form.html", {"form": form})
+            else:
+                oficio.numero = NumeracaoService.proximo_numero(
+                    request.camara, oficio.orgao, oficio.autor
+                )
+
             oficio.save()
             return redirect("oficios:preview", pk=oficio.pk)
     else:
