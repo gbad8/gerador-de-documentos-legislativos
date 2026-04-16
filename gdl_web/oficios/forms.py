@@ -19,7 +19,7 @@ class OficioForm(forms.ModelForm):
         required=False,
         min_value=1,
         label="Número do Ofício",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        widget=forms.NumberInput(attrs={"class": "form-control", "style": "max-width: 120px;"}),
     )
 
     class Meta:
