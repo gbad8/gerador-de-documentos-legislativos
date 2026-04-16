@@ -4,7 +4,7 @@ import pytest
 from datetime import date
 from unittest.mock import patch
 
-from oficios.models import Oficio
+from oficios.models import Numeracao, Oficio
 from oficios.services import NumeracaoService, PdfService
 
 
@@ -26,6 +26,27 @@ class TestNumeracaoService:
         ano = date.today().year
         # Autores diferentes têm numeração independente
         assert numero == f"001/{ano}"
+
+    def test_registrar_numero_manual_valido(self, camara, autor):
+        numero = NumeracaoService.registrar_numero_manual(camara, None, autor, 10)
+        ano = date.today().year
+        assert numero == f"010/{ano}"
+
+    def test_registrar_numero_manual_atualiza_ultimo(self, camara, autor):
+        NumeracaoService.registrar_numero_manual(camara, None, autor, 10)
+        ano = date.today().year
+        numeracao = Numeracao.objects.get(camara=camara, orgao=None, autor=autor, ano=ano)
+        assert numeracao.ultimo_numero == 10
+
+    def test_registrar_numero_manual_igual_rejeita(self, camara, autor):
+        NumeracaoService.proximo_numero(camara, None, autor)  # ultimo_numero = 1
+        with pytest.raises(ValueError, match="não é válido"):
+            NumeracaoService.registrar_numero_manual(camara, None, autor, 1)
+
+    def test_registrar_numero_manual_menor_rejeita(self, camara, autor):
+        NumeracaoService.registrar_numero_manual(camara, None, autor, 10)
+        with pytest.raises(ValueError, match="último número registrado"):
+            NumeracaoService.registrar_numero_manual(camara, None, autor, 5)
 
 
 class TestPdfService:
