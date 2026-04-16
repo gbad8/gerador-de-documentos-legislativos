@@ -44,7 +44,7 @@ class NumeracaoService:
             if numero <= numeracao.ultimo_numero:
                 raise ValueError(
                     f"O número {numero} não é válido. "
-                    f"O último número registrado para esta combinação é "
+                    f"O último número registrado para esta autoria é "
                     f"{numeracao.ultimo_numero:03d}/{ano}."
                 )
 

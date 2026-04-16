@@ -20,6 +20,13 @@
                 <input type="text" class="form-control" value="{{ form.instance.numero }}" disabled>
             </div>
             {% else %}
+            {% if form.numero_manual.errors %}
+            <div class="col-12">
+                <div class="alert alert-danger mb-0" role="alert">
+                    {{ form.numero_manual.errors.0 }}
+                </div>
+            </div>
+            {% endif %}
             <div class="col-auto">
                 <label class="col-form-label fw-medium">Numeração:</label>
             </div>
@@ -31,15 +38,10 @@
                 </div>
             </div>
             {% endfor %}
-            <div id="numero-manual-container" class="col-auto" style="display: none;">
+            <div id="numero-manual-container" class="col-auto" {% if not form.numero_manual.errors and form.tipo_numeracao.value != "manual" %}style="display: none;"{% endif %}>
                 <label for="{{ form.numero_manual.id_for_label }}" class="visually-hidden">Número do Ofício</label>
                 {{ form.numero_manual }}
             </div>
-            {% if form.numero_manual.errors %}
-            <div class="col-12">
-                <div class="text-danger small">{{ form.numero_manual.errors }}</div>
-            </div>
-            {% endif %}
             {% endif %}
             <div class="col-auto">
                 <label for="{{ form.data.id_for_label }}" class="col-form-label">Data:</label>
