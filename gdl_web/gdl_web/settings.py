@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "autores",
     "orgaos",
     "oficios",
+    "legislaturas",
     "landing",
 ]
 
