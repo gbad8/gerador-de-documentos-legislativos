@@ -38,3 +38,10 @@ class SessaoLegislativa(models.Model):
         ordinal = f"{self.numero}ª"
         categoria_display = self.get_categoria_display()
         return f"{ordinal} Sessão {categoria_display} da {self.legislatura}"
+
+    @property
+    def nome_curto(self):
+        """Retorna o nome da sessão sem a legislatura para exibição na listagem."""
+        ordinal = f"{self.numero}ª"
+        categoria_display = self.get_categoria_display()
+        return f"{ordinal} Sessão {categoria_display}"

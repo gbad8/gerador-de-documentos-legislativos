@@ -29,7 +29,7 @@
                     <tbody>
                         {% for sessao in sessoes %}
                         <tr>
-                            <td class="ps-4 fw-medium text-gdl-blue">{{ sessao }}</td>
+                            <td class="ps-4 fw-medium text-gdl-blue">{{ sessao.nome_curto }}</td>
                             <td>{{ sessao.legislatura }}</td>
                             <td>{{ sessao.data|date:"d/m/Y" }}</td>
                             <td class="text-end pe-4">

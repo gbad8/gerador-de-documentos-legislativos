@@ -9,6 +9,9 @@ class TestSessaoLegislativa:
     def test_str(self, sessao):
         assert str(sessao) == "1ª Sessão Ordinária da 8ª Legislatura"
 
+    def test_nome_curto(self, sessao):
+        assert sessao.nome_curto == "1ª Sessão Ordinária"
+
     def test_for_camara_isolation(self, sessao, outra_camara, legislatura):
         """Testa o TenantManager."""
         from legislaturas.models import Legislatura
