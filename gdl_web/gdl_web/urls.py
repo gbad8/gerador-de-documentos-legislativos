@@ -29,6 +29,7 @@ urlpatterns = [
     path("painel/configuracoes/autores/", include("autores.urls")),
     path("painel/configuracoes/legislaturas/", include("legislaturas.urls")),
     path("painel/configuracoes/orgaos/", include("orgaos.urls")),
+    path("painel/configuracoes/sessoes/", include("sessoes.urls")),
     path("login/", auth_views.LoginView.as_view(), name="login"),
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
 ]

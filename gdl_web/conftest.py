@@ -93,3 +93,17 @@ def user_logado(client, user, camara):
     )
     client.login(username="testuser", password="testpass123")
     return client
+
+
+@pytest.fixture
+def sessao(camara, legislatura):
+    """Sessão legislativa de teste."""
+    from sessoes.models import SessaoLegislativa
+    from datetime import date
+    return SessaoLegislativa.objects.create(
+        legislatura=legislatura,
+        numero=1,
+        categoria="ORDINARIA",
+        data=date(2021, 2, 1),
+        camara=camara,
+    )

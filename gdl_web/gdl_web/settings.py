@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "oficios",
     "legislaturas",
     "landing",
+    "sessoes",
 ]
 
 # --- Middleware ---
