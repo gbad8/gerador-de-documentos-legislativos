@@ -41,7 +41,7 @@ def oficio_create(request):
                     destinatario_orgao=form.cleaned_data["destinatario_orgao"],
                     destinatario_endereco=form.cleaned_data["destinatario_endereco"],
                     destinatario_pronome=form.cleaned_data["destinatario_pronome"],
-                    assunto=f"Encaminhamento do(a) {form.cleaned_data['proposicao']}, de autoria do(a) {form.cleaned_data['autor_proposicao'].nome}"
+                    assunto=f"Encaminhamento do(a) {form.cleaned_data['proposicao']}, de autoria de {form.cleaned_data['autor_proposicao'].nome}"
                 )
                 
                 numero_manual = form.cleaned_data.get("numero_manual")
@@ -135,7 +135,7 @@ def oficio_edit(request, pk):
                 oficio.destinatario_orgao = form.cleaned_data["destinatario_orgao"]
                 oficio.destinatario_endereco = form.cleaned_data["destinatario_endereco"]
                 oficio.destinatario_pronome = form.cleaned_data["destinatario_pronome"]
-                oficio.assunto = f"Encaminhamento do(a) {form.cleaned_data['proposicao']}, de autoria do(a) {form.cleaned_data['autor_proposicao'].nome}"
+                oficio.assunto = f"Encaminhamento do(a) {form.cleaned_data['proposicao']}, de autoria de {form.cleaned_data['autor_proposicao'].nome}"
                 
                 enc.sessao = form.cleaned_data["sessao"]
                 enc.votacao = form.cleaned_data["votacao"]

@@ -162,7 +162,7 @@ class OficioEncaminhamento(models.Model):
         return (
             f"A {camara.nome} - {camara.estado}, por meio de seu Presidente, {presidente}, "
             f"vem, mui respeitosamente, encaminhar à Prefeitura a cópia do(a) {self.proposicao}, "
-            f"de autoria do(a) {self.autor_proposicao.nome}. A referida proposição foi aprovada por "
+            f"de autoria de {self.autor_proposicao.nome}. A referida proposição foi aprovada por "
             f"{votacao_nome} nesta Casa Legislativa, na {self.sessao.nome_curto}, "
             f"realizada em {data_formatada}."
         )
