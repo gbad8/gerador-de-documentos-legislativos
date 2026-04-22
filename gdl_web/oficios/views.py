@@ -62,7 +62,7 @@ def oficio_create(request):
                     votacao=form.cleaned_data["votacao"],
                     proposicao=form.cleaned_data["proposicao"],
                     autor_proposicao=form.cleaned_data["autor_proposicao"],
-                    data_aprovacao=form.cleaned_data["data_aprovacao"]
+                    data_aprovacao=form.cleaned_data["sessao"].data
                 )
                 enc.save()
                 oficio.corpo = enc.get_corpo_gerado()
@@ -124,7 +124,6 @@ def oficio_edit(request, pk):
             "votacao": enc.votacao,
             "proposicao": enc.proposicao,
             "autor_proposicao": enc.autor_proposicao,
-            "data_aprovacao": enc.data_aprovacao,
         }
         if request.method == "POST":
             form = EncaminhamentoCriacaoForm(request.POST, camara=request.camara, is_edit=True)
@@ -142,7 +141,7 @@ def oficio_edit(request, pk):
                 enc.votacao = form.cleaned_data["votacao"]
                 enc.proposicao = form.cleaned_data["proposicao"]
                 enc.autor_proposicao = form.cleaned_data["autor_proposicao"]
-                enc.data_aprovacao = form.cleaned_data["data_aprovacao"]
+                enc.data_aprovacao = form.cleaned_data["sessao"].data
                 enc.save()
                 
                 oficio.corpo = enc.get_corpo_gerado()

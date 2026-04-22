@@ -102,17 +102,12 @@
         </div>
         
         <div class="row g-3 mb-4">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <label for="{{ form.sessao.id_for_label }}" class="form-label">Aprovada na Sessão:</label>
                 {{ form.sessao }}
                 {% if form.sessao.errors %}<div class="text-danger small">{{ form.sessao.errors }}</div>{% endif %}
             </div>
-            <div class="col-md-4">
-                <label for="{{ form.data_aprovacao.id_for_label }}" class="form-label">Data de Aprovação:</label>
-                {{ form.data_aprovacao }}
-                {% if form.data_aprovacao.errors %}<div class="text-danger small">{{ form.data_aprovacao.errors }}</div>{% endif %}
-            </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <label for="{{ form.votacao.id_for_label }}" class="form-label">Tipo de Votação:</label>
                 {{ form.votacao }}
                 {% if form.votacao.errors %}<div class="text-danger small">{{ form.votacao.errors }}</div>{% endif %}

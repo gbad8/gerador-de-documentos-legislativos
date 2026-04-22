@@ -139,9 +139,6 @@ class EncaminhamentoCriacaoForm(forms.Form):
     autor_proposicao = forms.ModelChoiceField(
         queryset=None, widget=forms.Select(attrs={"class": "form-select"}), label="Autor da Proposição"
     )
-    data_aprovacao = forms.DateField(
-        widget=forms.DateInput(attrs={"type": "date", "class": "form-control"}), label="Data de Aprovação"
-    )
 
     def __init__(self, *args, camara=None, **kwargs):
         is_edit = kwargs.pop('is_edit', False)
