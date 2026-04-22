@@ -3,8 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
-from oficios.forms import OficioForm
-from oficios.models import Oficio
+from oficios.forms import OficioForm, EncaminhamentoCriacaoForm
+from oficios.models import Oficio, OficioEncaminhamento
 from oficios.services import NumeracaoService, PdfService
 
 
@@ -16,11 +16,69 @@ def oficio_list(request):
 
 @login_required
 def oficio_create(request):
+    tipo = request.GET.get("tipo")
+    if not tipo:
+        return render(request, "oficios/tipo_select.html")
+
+    if tipo == "encaminhamento":
+        from autores.models import Autor
+        presidente = Autor.objects.filter(camara=request.camara, cargo=Autor.Cargo.PRESIDENTE).first()
+        if not presidente:
+            messages.error(request, "Não há um Presidente cadastrado na câmara. Não é possível criar ofícios de encaminhamento. Volte nas configurações de Autores e cadastre o presidente.")
+            return redirect("oficios:list")
+            
+        if request.method == "POST":
+            form = EncaminhamentoCriacaoForm(request.POST, camara=request.camara)
+            if form.is_valid():
+                oficio = Oficio(
+                    camara=request.camara,
+                    tipo=Oficio.Tipo.ENCAMINHAMENTO,
+                    autor=presidente,
+                    orgao=form.cleaned_data["orgao"],
+                    data=form.cleaned_data["data"],
+                    destinatario_nome=form.cleaned_data["destinatario_nome"],
+                    destinatario_cargo=form.cleaned_data["destinatario_cargo"],
+                    destinatario_orgao=form.cleaned_data["destinatario_orgao"],
+                    destinatario_endereco=form.cleaned_data["destinatario_endereco"],
+                    destinatario_pronome=form.cleaned_data["destinatario_pronome"],
+                    assunto=f"Encaminhamento: {form.cleaned_data['proposicao']}"
+                )
+                
+                numero_manual = form.cleaned_data.get("numero_manual")
+                tipo_numeracao = form.cleaned_data.get("tipo_numeracao")
+                if tipo_numeracao == "manual":
+                    try:
+                        oficio.numero = NumeracaoService.registrar_numero_manual(request.camara, oficio.orgao, oficio.autor, numero_manual)
+                    except ValueError as e:
+                        form.add_error("numero_manual", str(e))
+                        return render(request, "oficios/oficio_encaminhamento_form.html", {"form": form})
+                else:
+                    oficio.numero = NumeracaoService.proximo_numero(request.camara, oficio.orgao, oficio.autor)
+                oficio.save()
+                
+                enc = OficioEncaminhamento(
+                    oficio=oficio,
+                    sessao=form.cleaned_data["sessao"],
+                    votacao=form.cleaned_data["votacao"],
+                    proposicao=form.cleaned_data["proposicao"],
+                    autor_proposicao=form.cleaned_data["autor_proposicao"],
+                    data_aprovacao=form.cleaned_data["data_aprovacao"]
+                )
+                enc.save()
+                oficio.corpo = enc.get_corpo_gerado()
+                oficio.save()
+                return redirect("oficios:preview", pk=oficio.pk)
+        else:
+            form = EncaminhamentoCriacaoForm(camara=request.camara)
+        return render(request, "oficios/oficio_encaminhamento_form.html", {"form": form, "title": "Novo Ofício de Encaminhamento"})
+
+    # LIVRE (Default)
     if request.method == "POST":
         form = OficioForm(request.POST, camara=request.camara)
         if form.is_valid():
             oficio = form.save(commit=False)
             oficio.camara = request.camara
+            oficio.tipo = Oficio.Tipo.LIVRE
             numero_manual = form.cleaned_data.get("numero_manual")
             tipo_numeracao = form.cleaned_data.get("tipo_numeracao")
 
@@ -31,18 +89,19 @@ def oficio_create(request):
                     )
                 except ValueError as e:
                     form.add_error("numero_manual", str(e))
-                    return render(request, "oficios/oficio_form.html", {"form": form})
+                    return render(request, "oficios/oficio_form.html", {"form": form, "title": "Novo Ofício Livre"})
             else:
                 oficio.numero = NumeracaoService.proximo_numero(
                     request.camara, oficio.orgao, oficio.autor
                 )
 
             oficio.save()
+            form.save_m2m()
             return redirect("oficios:preview", pk=oficio.pk)
     else:
         form = OficioForm(camara=request.camara)
 
-    return render(request, "oficios/oficio_form.html", {"form": form})
+    return render(request, "oficios/oficio_form.html", {"form": form, "title": "Novo Ofício Livre"})
 
 
 @login_required
@@ -51,15 +110,58 @@ def oficio_edit(request, pk):
         Oficio.objects.for_camara(request.camara), pk=pk
     )
 
-    if request.method == "POST":
-        form = OficioForm(request.POST, instance=oficio, camara=request.camara)
-        if form.is_valid():
-            form.save()
-            return redirect("oficios:preview", pk=oficio.pk)
-    else:
-        form = OficioForm(instance=oficio, camara=request.camara)
+    if oficio.tipo == Oficio.Tipo.ENCAMINHAMENTO:
+        enc = oficio.encaminhamento
+        initial = {
+            "orgao": oficio.orgao,
+            "data": oficio.data,
+            "destinatario_nome": oficio.destinatario_nome,
+            "destinatario_cargo": oficio.destinatario_cargo,
+            "destinatario_orgao": oficio.destinatario_orgao,
+            "destinatario_endereco": oficio.destinatario_endereco,
+            "destinatario_pronome": oficio.destinatario_pronome,
+            "sessao": enc.sessao,
+            "votacao": enc.votacao,
+            "proposicao": enc.proposicao,
+            "autor_proposicao": enc.autor_proposicao,
+            "data_aprovacao": enc.data_aprovacao,
+        }
+        if request.method == "POST":
+            form = EncaminhamentoCriacaoForm(request.POST, camara=request.camara, is_edit=True)
+            if form.is_valid():
+                oficio.orgao = form.cleaned_data["orgao"]
+                oficio.data = form.cleaned_data["data"]
+                oficio.destinatario_nome = form.cleaned_data["destinatario_nome"]
+                oficio.destinatario_cargo = form.cleaned_data["destinatario_cargo"]
+                oficio.destinatario_orgao = form.cleaned_data["destinatario_orgao"]
+                oficio.destinatario_endereco = form.cleaned_data["destinatario_endereco"]
+                oficio.destinatario_pronome = form.cleaned_data["destinatario_pronome"]
+                oficio.assunto = f"Encaminhamento: {form.cleaned_data['proposicao']}"
+                
+                enc.sessao = form.cleaned_data["sessao"]
+                enc.votacao = form.cleaned_data["votacao"]
+                enc.proposicao = form.cleaned_data["proposicao"]
+                enc.autor_proposicao = form.cleaned_data["autor_proposicao"]
+                enc.data_aprovacao = form.cleaned_data["data_aprovacao"]
+                enc.save()
+                
+                oficio.corpo = enc.get_corpo_gerado()
+                oficio.save()
+                return redirect("oficios:preview", pk=oficio.pk)
+        else:
+            form = EncaminhamentoCriacaoForm(initial=initial, camara=request.camara, is_edit=True)
+        return render(request, "oficios/oficio_encaminhamento_form.html", {"form": form, "title": "Editar Encaminhamento"})
 
-    return render(request, "oficios/oficio_form.html", {"form": form})
+    else:
+        if request.method == "POST":
+            form = OficioForm(request.POST, instance=oficio, camara=request.camara)
+            if form.is_valid():
+                form.save()
+                return redirect("oficios:preview", pk=oficio.pk)
+        else:
+            form = OficioForm(instance=oficio, camara=request.camara)
+
+        return render(request, "oficios/oficio_form.html", {"form": form, "title": "Editar Ofício Livre"})
 
 
 @login_required

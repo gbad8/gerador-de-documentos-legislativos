@@ -15,7 +15,14 @@
         {% for oficio in oficios %}
         <tr class="clickable-row" data-href="{% url 'oficios:preview' oficio.pk %}">
             <td><span class="fw-medium text-gdl-blue">{{ oficio.numero }}</span></td>
-            <td>{{ oficio.assunto }}</td>
+            <td>
+                {% if oficio.tipo == 'encaminhamento' %}
+                    <span class="badge bg-success text-white rounded-pill px-2 py-1 me-1" style="font-size: 0.65rem;">ENCAMINHAMENTO</span>
+                {% else %}
+                    <span class="badge bg-primary text-white rounded-pill px-2 py-1 me-1" style="font-size: 0.65rem;">LIVRE</span>
+                {% endif %}
+                {{ oficio.assunto }}
+            </td>
             <td>{{ oficio.orgao.abreviatura|default:"-" }}</td>
             <td>{{ oficio.autor }}</td>
             <td class="text-nowrap">{{ oficio.data|date:"d/m/Y" }}</td>
