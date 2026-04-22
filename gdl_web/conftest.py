@@ -63,6 +63,20 @@ def outro_autor(camara):
 
 
 @pytest.fixture
+def legislatura(camara):
+    """Legislatura de teste."""
+    from legislaturas.models import Legislatura
+    from datetime import date
+    return Legislatura.objects.create(
+        numero=8,
+        data_eleicao=date(2020, 11, 15),
+        data_inicio=date(2021, 1, 1),
+        data_fim=date(2024, 12, 31),
+        camara=camara,
+    )
+
+
+@pytest.fixture
 def user(db):
     """Usuário Django básico."""
     return User.objects.create_user(username="testuser", password="testpass123")
@@ -79,3 +93,17 @@ def user_logado(client, user, camara):
     )
     client.login(username="testuser", password="testpass123")
     return client
+
+
+@pytest.fixture
+def sessao(camara, legislatura):
+    """Sessão legislativa de teste."""
+    from sessoes.models import SessaoLegislativa
+    from datetime import date
+    return SessaoLegislativa.objects.create(
+        legislatura=legislatura,
+        numero=1,
+        categoria="ORDINARIA",
+        data=date(2021, 2, 1),
+        camara=camara,
+    )

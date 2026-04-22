@@ -48,30 +48,30 @@ class TestOficioList:
 
 class TestOficioCreate:
     def test_post_valido_cria_e_redireciona(self, user_logado, dados_post):
-        response = user_logado.post("/painel/oficios/novo/", dados_post)
+        response = user_logado.post("/painel/oficios/novo/?tipo=livre", dados_post)
         assert response.status_code == 302
         assert Oficio.objects.count() == 1
 
     def test_post_com_numero_manual_valido(self, user_logado, dados_post):
         dados_post["tipo_numeracao"] = "manual"
         dados_post["numero_manual"] = 5
-        response = user_logado.post("/painel/oficios/novo/", dados_post)
+        response = user_logado.post("/painel/oficios/novo/?tipo=livre", dados_post)
         assert response.status_code == 302
         oficio = Oficio.objects.first()
         assert "005/" in oficio.numero
 
     def test_post_com_numero_manual_invalido(self, user_logado, dados_post):
         # Criar um ofício primeiro para estabelecer ultimo_numero = 1
-        user_logado.post("/painel/oficios/novo/", dados_post)
+        user_logado.post("/painel/oficios/novo/?tipo=livre", dados_post)
         dados_post["tipo_numeracao"] = "manual"
         dados_post["numero_manual"] = 1  # igual ao ultimo_numero
-        response = user_logado.post("/painel/oficios/novo/", dados_post)
+        response = user_logado.post("/painel/oficios/novo/?tipo=livre", dados_post)
         assert response.status_code == 200
         assert "form" in response.context
 
     def test_post_invalido_retorna_form(self, user_logado, dados_post):
         dados_post["assunto"] = ""
-        response = user_logado.post("/painel/oficios/novo/", dados_post)
+        response = user_logado.post("/painel/oficios/novo/?tipo=livre", dados_post)
         assert response.status_code == 200
         assert "form" in response.context
 

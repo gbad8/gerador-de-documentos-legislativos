@@ -56,6 +56,38 @@
                 </div>
             </div>
         </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card-painel h-100 p-3 hover-lift position-relative">
+                <div class="card-body text-center d-flex flex-column justify-content-center py-4">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex mx-auto align-items-center justify-content-center mb-4" style="width: 70px; height: 70px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="var(--gdl-green)" class="bi bi-calendar-range" viewBox="0 0 16 16">
+                          <path d="M9 7a1 1 0 0 1 1-1h5v2h-5a1 1 0 0 1-1-1zM1 9h4a1 1 0 0 1 0 2H1V9z"/>
+                          <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                        </svg>
+                    </div>
+                    <h5 class="fw-bold text-gdl-blue mb-3">Legislaturas</h5>
+                    <p class="card-text text-muted small mb-4">Registre e gerencie as legislaturas (períodos de mandatos) da Câmara Municipal.</p>
+                    <a href="{% url 'legislatura_list' %}" class="btn btn-outline-primary rounded-pill mt-auto stretched-link text-decoration-none">Gerenciar Legislaturas</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card-painel h-100 p-3 hover-lift position-relative">
+                <div class="card-body text-center d-flex flex-column justify-content-center py-4">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex mx-auto align-items-center justify-content-center mb-4" style="width: 70px; height: 70px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="var(--gdl-green)" class="bi bi-calendar-event" viewBox="0 0 16 16">
+                          <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z"/>
+                          <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                        </svg>
+                    </div>
+                    <h5 class="fw-bold text-gdl-blue mb-3">Sessões</h5>
+                    <p class="card-text text-muted small mb-4">Gerencie as sessões atreladas às legislaturas da Câmara.</p>
+                    <a href="{% url 'sessao_list' %}" class="btn btn-outline-primary rounded-pill mt-auto stretched-link text-decoration-none">Gerenciar Sessões</a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
