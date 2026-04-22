@@ -157,7 +157,15 @@ class OficioEncaminhamento(models.Model):
         camara = self.oficio.camara
         presidente = self.oficio.autor.nome
         votacao_nome = self.get_votacao_display().lower()
-        data_formatada = self.data_aprovacao.strftime('%d/%m/%Y')
+        
+        meses = [
+            "", "janeiro", "fevereiro", "março", "abril", "maio", "junho",
+            "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
+        ]
+        dia = self.data_aprovacao.day
+        mes = meses[self.data_aprovacao.month]
+        ano = self.data_aprovacao.year
+        data_formatada = f"{dia:02d} de {mes} de {ano}"
         
         return (
             f"A {camara.nome} - {camara.estado}, por meio de seu Presidente, {presidente}, "
