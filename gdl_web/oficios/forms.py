@@ -134,7 +134,7 @@ class EncaminhamentoCriacaoForm(forms.Form):
         choices=OficioEncaminhamento.Votacao.choices, widget=forms.Select(attrs={"class": "form-select"}), label="Votação / Aprovação"
     )
     proposicao = forms.CharField(
-        max_length=200, widget=forms.TextInput(attrs={"class": "form-control"}), label="Indicação / Proposição", help_text="Ex: Indicação n° 13"
+        max_length=200, widget=forms.TextInput(attrs={"class": "form-control"}), label="Proposição", help_text="Ex: Indicação n° 13"
     )
     autor_proposicao = forms.ModelChoiceField(
         queryset=None, widget=forms.Select(attrs={"class": "form-select"}), label="Autor da Proposição"
