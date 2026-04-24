@@ -105,8 +105,18 @@ class EncaminhamentoCriacaoForm(forms.Form):
     )
     data = forms.DateField(widget=forms.DateInput(attrs={"type": "date", "class": "form-control"}), label="Data do Ofício")
     
+    SELECAO_DESTINO_CHOICES = [("manual", "Preencher Manualmente"), ("catalogo", "Escolher Órgão do Catálogo")]
+    selecao_destino = forms.ChoiceField(
+        choices=SELECAO_DESTINO_CHOICES, initial="manual",
+        widget=forms.RadioSelect(attrs={"class": "form-check-input"}), label="Modo de Preenchimento"
+    )
+    orgao_externo = forms.ModelChoiceField(
+        queryset=None, required=False, empty_label="Selecione um Órgão...",
+        widget=forms.Select(attrs={"class": "form-select select2"}), label="Entidade do Catálogo"
+    )
+    
     destinatario_nome = forms.CharField(
-        max_length=200, widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Ex: Prefeitura Municipal"}),
+        max_length=200, required=False, widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Ex: Prefeitura Municipal"}),
         initial="Prefeitura Municipal", label="Nome do Destinatário"
     )
     destinatario_cargo = forms.CharField(
@@ -121,7 +131,7 @@ class EncaminhamentoCriacaoForm(forms.Form):
         widget=forms.Textarea(attrs={"rows": 2, "class": "form-control"}), required=False, label="Endereço"
     )
     destinatario_pronome = forms.CharField(
-        max_length=50, widget=forms.TextInput(attrs={"class": "form-control"}), 
+        max_length=50, required=False, widget=forms.TextInput(attrs={"class": "form-control"}), 
         initial="Excelentíssimo(a)", label="Pronome de Tratamento"
     )
     
@@ -147,9 +157,11 @@ class EncaminhamentoCriacaoForm(forms.Form):
             from orgaos.models import Orgao
             from sessoes.models import SessaoLegislativa
             from autores.models import Autor
+            from orgaos_externos.models import OrgaoExterno
             self.fields["orgao"].queryset = Orgao.objects.for_camara(camara)
             self.fields["sessao"].queryset = SessaoLegislativa.objects.for_camara(camara)
             self.fields["autor_proposicao"].queryset = Autor.objects.for_camara(camara)
+            self.fields["orgao_externo"].queryset = OrgaoExterno.objects.for_camara(camara)
             
         if is_edit:
             del self.fields["tipo_numeracao"]
@@ -160,5 +172,16 @@ class EncaminhamentoCriacaoForm(forms.Form):
         tipo_numeracao = cleaned_data.get("tipo_numeracao")
         if tipo_numeracao == "manual" and not cleaned_data.get("numero_manual"):
             self.add_error("numero_manual", "Informe o número do ofício.")
+            
+        selecao_destino = cleaned_data.get("selecao_destino")
+        if selecao_destino == "catalogo":
+            if not cleaned_data.get("orgao_externo"):
+                self.add_error("orgao_externo", "Selecione um órgão externo do catálogo.")
+        else:
+            if not cleaned_data.get("destinatario_nome"):
+                self.add_error("destinatario_nome", "Este campo é obrigatório no preenchimento manual.")
+            if not cleaned_data.get("destinatario_pronome"):
+                self.add_error("destinatario_pronome", "Este campo é obrigatório no preenchimento manual.")
+                
         return cleaned_data
 

@@ -30,17 +30,31 @@ def oficio_create(request):
         if request.method == "POST":
             form = EncaminhamentoCriacaoForm(request.POST, camara=request.camara)
             if form.is_valid():
+                dest_nome = form.cleaned_data["destinatario_nome"]
+                dest_cargo = form.cleaned_data["destinatario_cargo"]
+                dest_orgao = form.cleaned_data["destinatario_orgao"]
+                dest_endereco = form.cleaned_data["destinatario_endereco"]
+                dest_pronome = form.cleaned_data["destinatario_pronome"]
+                
+                if form.cleaned_data.get("selecao_destino") == "catalogo":
+                    org_ext = form.cleaned_data["orgao_externo"]
+                    dest_nome = org_ext.responsavel
+                    dest_cargo = org_ext.cargo
+                    dest_orgao = org_ext.nome
+                    dest_endereco = org_ext.endereco or ""
+                    dest_pronome = org_ext.pronome_tratamento
+
                 oficio = Oficio(
                     camara=request.camara,
                     tipo=Oficio.Tipo.ENCAMINHAMENTO,
                     autor=presidente,
                     orgao=form.cleaned_data["orgao"],
                     data=form.cleaned_data["data"],
-                    destinatario_nome=form.cleaned_data["destinatario_nome"],
-                    destinatario_cargo=form.cleaned_data["destinatario_cargo"],
-                    destinatario_orgao=form.cleaned_data["destinatario_orgao"],
-                    destinatario_endereco=form.cleaned_data["destinatario_endereco"],
-                    destinatario_pronome=form.cleaned_data["destinatario_pronome"],
+                    destinatario_nome=dest_nome,
+                    destinatario_cargo=dest_cargo,
+                    destinatario_orgao=dest_orgao,
+                    destinatario_endereco=dest_endereco,
+                    destinatario_pronome=dest_pronome,
                     assunto=f"Encaminhamento do(a) {form.cleaned_data['proposicao']}, de autoria de {form.cleaned_data['autor_proposicao'].nome}"
                 )
                 
@@ -130,11 +144,20 @@ def oficio_edit(request, pk):
             if form.is_valid():
                 oficio.orgao = form.cleaned_data["orgao"]
                 oficio.data = form.cleaned_data["data"]
-                oficio.destinatario_nome = form.cleaned_data["destinatario_nome"]
-                oficio.destinatario_cargo = form.cleaned_data["destinatario_cargo"]
-                oficio.destinatario_orgao = form.cleaned_data["destinatario_orgao"]
-                oficio.destinatario_endereco = form.cleaned_data["destinatario_endereco"]
-                oficio.destinatario_pronome = form.cleaned_data["destinatario_pronome"]
+                
+                if form.cleaned_data.get("selecao_destino") == "catalogo":
+                    org_ext = form.cleaned_data["orgao_externo"]
+                    oficio.destinatario_nome = org_ext.responsavel
+                    oficio.destinatario_cargo = org_ext.cargo
+                    oficio.destinatario_orgao = org_ext.nome
+                    oficio.destinatario_endereco = org_ext.endereco or ""
+                    oficio.destinatario_pronome = org_ext.pronome_tratamento
+                else:
+                    oficio.destinatario_nome = form.cleaned_data["destinatario_nome"]
+                    oficio.destinatario_cargo = form.cleaned_data["destinatario_cargo"]
+                    oficio.destinatario_orgao = form.cleaned_data["destinatario_orgao"]
+                    oficio.destinatario_endereco = form.cleaned_data["destinatario_endereco"]
+                    oficio.destinatario_pronome = form.cleaned_data["destinatario_pronome"]
                 oficio.assunto = f"Encaminhamento do(a) {form.cleaned_data['proposicao']}, de autoria de {form.cleaned_data['autor_proposicao'].nome}"
                 
                 enc.sessao = form.cleaned_data["sessao"]
