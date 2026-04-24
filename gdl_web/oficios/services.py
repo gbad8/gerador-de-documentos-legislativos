@@ -64,3 +64,22 @@ class PdfService:
             "camara": camara,
         })
         return HTML(string=html_string).write_pdf()
+
+
+class PronomeService:
+    @staticmethod
+    def flexionar_pronome(pronome_cru, sexo):
+        mapping = {
+            "Vossa Excelência / V.Ex.ª": {"M": "Excelentíssimo", "F": "Excelentíssima", "N": "Excelentíssimo(a)"},
+            "Vossa Senhoria / V.Sa.": {"M": "Ilustríssimo", "F": "Ilustríssima", "N": "Ilustríssimo(a)"},
+            "Vossa Magnificência / V.Mag.ª": {"M": "Magnífico", "F": "Magnífica", "N": "Magnífico(a)"},
+            "Vossa Eminência / V.Ema.": {"M": "Eminentíssimo", "F": "Eminentíssima", "N": "Eminentíssimo(a)"},
+        }
+        
+        base = mapping.get(pronome_cru, {}).get(sexo, pronome_cru)
+        
+        if pronome_cru in mapping:
+            sufixo = " Senhor" if sexo == "M" else " Senhora" if sexo == "F" else " Senhor(a)"
+            return f"{base}{sufixo}"
+            
+        return base

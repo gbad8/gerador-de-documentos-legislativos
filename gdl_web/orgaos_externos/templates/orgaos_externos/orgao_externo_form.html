@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="card-painel p-4 mb-4">
+                <div class="card-body p-4">
+                    <h3 class="fw-bold mb-4 text-center text-gdl-blue">{{ title }}</h3>
+                    <p class="text-muted text-center mb-5">
+                        Utilize o formulário abaixo para gerenciar os dados do órgão externo no catálogo.
+                    </p>
+
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger mb-4">
+                            {% for error in form.non_field_errors %}
+                            <p class="mb-0"><small>{{ error }}</small></p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        <h6 class="fw-bold text-secondary mb-3 pb-2 border-bottom">Dados da Entidade</h6>
+                        <div class="row">
+                            <div class="col-md-8 mb-4">
+                                <label for="{{ form.nome.id_for_label }}" class="form-label fw-medium">{{ form.nome.label }} *</label>
+                                {{ form.nome }}
+                                {% if form.nome.errors %}
+                                    <div class="text-danger small mt-1">{% for error in form.nome.errors %}{{ error }}{% endfor %}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-4 mb-4">
+                                <label for="{{ form.abreviatura.id_for_label }}" class="form-label fw-medium">{{ form.abreviatura.label }} *</label>
+                                {{ form.abreviatura }}
+                                {% if form.abreviatura.errors %}
+                                    <div class="text-danger small mt-1">{% for error in form.abreviatura.errors %}{{ error }}{% endfor %}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-12 mb-4">
+                                <label for="{{ form.endereco.id_for_label }}" class="form-label fw-medium">{{ form.endereco.label }}</label>
+                                {{ form.endereco }}
+                                {% if form.endereco.errors %}
+                                    <div class="text-danger small mt-1">{% for error in form.endereco.errors %}{{ error }}{% endfor %}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <h6 class="fw-bold text-secondary mb-3 mt-4 pb-2 border-bottom">Dados do Responsável</h6>
+                        <div class="row">
+                            <div class="col-md-8 mb-4">
+                                <label for="{{ form.responsavel.id_for_label }}" class="form-label fw-medium">{{ form.responsavel.label }} *</label>
+                                {{ form.responsavel }}
+                                {% if form.responsavel.errors %}
+                                    <div class="text-danger small mt-1">{% for error in form.responsavel.errors %}{{ error }}{% endfor %}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-4 mb-4">
+                                <label for="{{ form.sexo.id_for_label }}" class="form-label fw-medium">{{ form.sexo.label }} *</label>
+                                {{ form.sexo }}
+                                {% if form.sexo.errors %}
+                                    <div class="text-danger small mt-1">{% for error in form.sexo.errors %}{{ error }}{% endfor %}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label for="{{ form.cargo.id_for_label }}" class="form-label fw-medium">{{ form.cargo.label }} *</label>
+                                {{ form.cargo }}
+                                {% if form.cargo.errors %}
+                                    <div class="text-danger small mt-1">{% for error in form.cargo.errors %}{{ error }}{% endfor %}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-5">
+                                <label for="{{ form.pronome_tratamento.id_for_label }}" class="form-label fw-medium">{{ form.pronome_tratamento.label }} *</label>
+                                {{ form.pronome_tratamento }}
+                                {% if form.pronome_tratamento.errors %}
+                                    <div class="text-danger small mt-1">{% for error in form.pronome_tratamento.errors %}{{ error }}{% endfor %}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'orgao_externo_list' %}" class="btn btn-outline-secondary rounded-pill py-2 px-4 border me-md-2">Cancelar</a>
+                            <button type="submit" class="btn btn-primary rounded-pill py-2 px-5 fw-semibold shadow-sm">Salvar Alterações</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "core",
     "autores",
     "orgaos",
+    "orgaos_externos",
     "oficios",
     "legislaturas",
     "landing",
