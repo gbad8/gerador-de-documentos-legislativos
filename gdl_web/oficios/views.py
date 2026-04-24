@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from oficios.forms import OficioForm, EncaminhamentoCriacaoForm
 from oficios.models import Oficio, OficioEncaminhamento
-from oficios.services import NumeracaoService, PdfService
+from oficios.services import NumeracaoService, PdfService, PronomeService
 
 
 @login_required
@@ -42,7 +42,7 @@ def oficio_create(request):
                     dest_cargo = org_ext.cargo
                     dest_orgao = org_ext.nome
                     dest_endereco = org_ext.endereco or ""
-                    dest_pronome = org_ext.pronome_tratamento
+                    dest_pronome = PronomeService.flexionar_pronome(org_ext.pronome_tratamento, org_ext.sexo)
 
                 oficio = Oficio(
                     camara=request.camara,
@@ -151,7 +151,7 @@ def oficio_edit(request, pk):
                     oficio.destinatario_cargo = org_ext.cargo
                     oficio.destinatario_orgao = org_ext.nome
                     oficio.destinatario_endereco = org_ext.endereco or ""
-                    oficio.destinatario_pronome = org_ext.pronome_tratamento
+                    oficio.destinatario_pronome = PronomeService.flexionar_pronome(org_ext.pronome_tratamento, org_ext.sexo)
                 else:
                     oficio.destinatario_nome = form.cleaned_data["destinatario_nome"]
                     oficio.destinatario_cargo = form.cleaned_data["destinatario_cargo"]
