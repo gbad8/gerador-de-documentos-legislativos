@@ -90,8 +90,27 @@
             {% if form.coautores.errors %}<div class="text-danger small">{{ form.coautores.errors }}</div>{% endif %}
         </div>
 
-        {# ── Destinatário ── #}
-        <div class="row g-3 mb-3">
+        {# ── Receptor do Documento ── #}
+        <h5 class="fw-bold text-secondary mb-3 mt-4">Receptor do Documento</h5>
+        
+        <div class="row mb-3">
+            <div class="col-12 mb-3">
+                {% for radio in form.selecao_destino %}
+                <div class="form-check form-check-inline">
+                    {{ radio.tag }}
+                    <label class="form-check-label fw-medium cursor-pointer" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div id="container-orgao-externo" class="col-md-12 mb-2 d-none pb-3 border-bottom">
+                <label for="{{ form.orgao_externo.id_for_label }}" class="form-label text-primary fw-bold">{{ form.orgao_externo.label }}:</label>
+                {{ form.orgao_externo }}
+                {% if form.orgao_externo.errors %}<div class="text-danger small mt-1">{{ form.orgao_externo.errors }}</div>{% endif %}
+            </div>
+        </div>
+
+        <div id="container-insercao-manual" class="row g-3 mb-3 pb-3 border-bottom">
             <div class="col-md-4">
                 <label for="{{ form.destinatario_nome.id_for_label }}" class="form-label">Destinatário:</label>
                 {{ form.destinatario_nome }}
@@ -107,9 +126,6 @@
                 {{ form.destinatario_pronome }}
                 {% if form.destinatario_pronome.errors %}<div class="text-danger small">{{ form.destinatario_pronome.errors }}</div>{% endif %}
             </div>
-        </div>
-
-        <div class="row g-3 mb-3">
             <div class="col-md-6">
                 <label for="{{ form.destinatario_orgao.id_for_label }}" class="form-label">Órgão:</label>
                 {{ form.destinatario_orgao }}
@@ -178,6 +194,30 @@
             radio.addEventListener('change', toggleNumeroManual);
         });
         toggleNumeroManual();
+        
+        // Toggle Órgão Externo vs Inserção Manual
+        const containerCatalao = document.getElementById('container-orgao-externo');
+        const containerManual = document.getElementById('container-insercao-manual');
+        const radiosDestino = document.querySelectorAll('input[name="selecao_destino"]');
+
+        function toggleDestino() {
+            if (!containerCatalao || !containerManual) return;
+            const selected = document.querySelector('input[name="selecao_destino"]:checked');
+            if (selected && selected.value === 'catalogo') {
+                containerCatalao.classList.remove('d-none');
+                containerManual.classList.add('d-none');
+            } else {
+                containerCatalao.classList.add('d-none');
+                containerManual.classList.remove('d-none');
+            }
+        }
+
+        if (radiosDestino.length > 0) {
+            radiosDestino.forEach(function(radio) {
+                radio.addEventListener('change', toggleDestino);
+            });
+            toggleDestino();
+        }
     });
 </script>
 {% endblock %}

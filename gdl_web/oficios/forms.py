@@ -14,6 +14,16 @@ class OficioForm(forms.ModelForm):
         widget=forms.RadioSelect(attrs={"class": "form-check-input"}),
         label="Numeração",
     )
+    
+    SELECAO_DESTINO_CHOICES = [("manual", "Preencher Manualmente"), ("catalogo", "Escolher Órgão do Catálogo")]
+    selecao_destino = forms.ChoiceField(
+        choices=SELECAO_DESTINO_CHOICES, initial="manual",
+        widget=forms.RadioSelect(attrs={"class": "form-check-input"}), label="Modo de Preenchimento"
+    )
+    orgao_externo = forms.ModelChoiceField(
+        queryset=None, required=False, empty_label="Selecione um Órgão...",
+        widget=forms.Select(attrs={"class": "form-select select2"}), label="Entidade do Catálogo"
+    )
 
     numero_manual = forms.IntegerField(
         required=False,
@@ -57,9 +67,17 @@ class OficioForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if camara:
             from orgaos.models import Orgao
+            from orgaos_externos.models import OrgaoExterno
             self.fields["orgao"].queryset = Orgao.objects.for_camara(camara)
             self.fields["autor"].queryset = Autor.objects.for_camara(camara)
             self.fields["coautores"].queryset = Autor.objects.for_camara(camara)
+            self.fields["orgao_externo"].queryset = OrgaoExterno.objects.for_camara(camara)
+
+        self.fields["destinatario_nome"].required = False
+        self.fields["destinatario_cargo"].required = False
+        self.fields["destinatario_orgao"].required = False
+        self.fields["destinatario_endereco"].required = False
+        self.fields["destinatario_pronome"].required = False
 
         # Na edição, remover os campos de numeração (número é imutável)
         if self.instance and self.instance.pk:
@@ -86,6 +104,16 @@ class OficioForm(forms.ModelForm):
             self.add_error("assunto", "Este campo é obrigatório.")
         if not cleaned_data.get("corpo"):
             self.add_error("corpo", "Este campo é obrigatório.")
+
+        selecao_destino = cleaned_data.get("selecao_destino")
+        if selecao_destino == "catalogo":
+            if not cleaned_data.get("orgao_externo"):
+                self.add_error("orgao_externo", "Selecione um órgão externo do catálogo.")
+        else:
+            if not cleaned_data.get("destinatario_nome"):
+                self.add_error("destinatario_nome", "Este campo é obrigatório no preenchimento manual.")
+            if not cleaned_data.get("destinatario_pronome"):
+                self.add_error("destinatario_pronome", "Este campo é obrigatório no preenchimento manual.")
 
         return cleaned_data
 

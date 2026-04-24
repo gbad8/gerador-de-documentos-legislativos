@@ -93,6 +93,15 @@ def oficio_create(request):
             oficio = form.save(commit=False)
             oficio.camara = request.camara
             oficio.tipo = Oficio.Tipo.LIVRE
+            
+            if form.cleaned_data.get("selecao_destino") == "catalogo":
+                org_ext = form.cleaned_data["orgao_externo"]
+                oficio.destinatario_nome = org_ext.responsavel
+                oficio.destinatario_cargo = org_ext.cargo
+                oficio.destinatario_orgao = org_ext.nome
+                oficio.destinatario_endereco = org_ext.endereco or ""
+                oficio.destinatario_pronome = PronomeService.flexionar_pronome(org_ext.pronome_tratamento, org_ext.sexo)
+            
             numero_manual = form.cleaned_data.get("numero_manual")
             tipo_numeracao = form.cleaned_data.get("tipo_numeracao")
 
@@ -178,7 +187,16 @@ def oficio_edit(request, pk):
         if request.method == "POST":
             form = OficioForm(request.POST, instance=oficio, camara=request.camara)
             if form.is_valid():
-                form.save()
+                oficio = form.save(commit=False)
+                if form.cleaned_data.get("selecao_destino") == "catalogo":
+                    org_ext = form.cleaned_data["orgao_externo"]
+                    oficio.destinatario_nome = org_ext.responsavel
+                    oficio.destinatario_cargo = org_ext.cargo
+                    oficio.destinatario_orgao = org_ext.nome
+                    oficio.destinatario_endereco = org_ext.endereco or ""
+                    oficio.destinatario_pronome = PronomeService.flexionar_pronome(org_ext.pronome_tratamento, org_ext.sexo)
+                oficio.save()
+                form.save_m2m()
                 return redirect("oficios:preview", pk=oficio.pk)
         else:
             form = OficioForm(instance=oficio, camara=request.camara)
