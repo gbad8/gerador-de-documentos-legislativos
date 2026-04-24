@@ -30,6 +30,7 @@ urlpatterns = [
     path("painel/configuracoes/legislaturas/", include("legislaturas.urls")),
     path("painel/configuracoes/orgaos/", include("orgaos.urls")),
     path("painel/configuracoes/sessoes/", include("sessoes.urls")),
+    path("painel/configuracoes/orgaos-externos/", include("orgaos_externos.urls")),
     path("login/", auth_views.LoginView.as_view(), name="login"),
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
 ]
