@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import AutorForm
@@ -10,8 +11,12 @@ from .models import Autor
 def autor_list(request):
     """Lista os autores da câmara do usuário."""
     # Usando o manager customizado para filtrar pela câmara atual
-    autores = Autor.objects.for_camara(request.camara)
-    return render(request, "autores/autor_list.html", {"autores": autores})
+    autores_qs = Autor.objects.for_camara(request.camara).order_by('nome')
+    paginator = Paginator(autores_qs, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    return render(request, "autores/autor_list.html", {"page_obj": page_obj})
 
 
 @login_required
