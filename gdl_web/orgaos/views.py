@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import OrgaoForm
@@ -10,8 +11,12 @@ from .models import Orgao
 def orgao_list(request):
     """Lista os órgãos da câmara do usuário."""
     # Usando o manager customizado para filtrar pela câmara atual
-    orgaos = Orgao.objects.for_camara(request.camara)
-    return render(request, "orgaos/orgao_list.html", {"orgaos": orgaos})
+    orgaos_qs = Orgao.objects.for_camara(request.camara).order_by('nome')
+    paginator = Paginator(orgaos_qs, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    return render(request, "orgaos/orgao_list.html", {"page_obj": page_obj})
 
 
 @login_required
