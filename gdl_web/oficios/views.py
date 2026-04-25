@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -10,8 +11,13 @@ from oficios.services import NumeracaoService, PdfService, PronomeService
 
 @login_required
 def oficio_list(request):
-    oficios = Oficio.objects.for_camara(request.camara).select_related("autor", "orgao")
-    return render(request, "oficios/oficio_list.html", {"oficios": oficios})
+    oficios_qs = Oficio.objects.for_camara(request.camara).select_related("autor", "orgao").order_by("-data", "-numero")
+    
+    paginator = Paginator(oficios_qs, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    return render(request, "oficios/oficio_list.html", {"page_obj": page_obj})
 
 
 @login_required
@@ -228,10 +234,15 @@ def oficio_generate_pdf(request, pk):
 @login_required
 def oficio_search(request):
     q = request.GET.get("q", "")
-    oficios = Oficio.objects.for_camara(request.camara).select_related("autor", "orgao")
+    oficios_qs = Oficio.objects.for_camara(request.camara).select_related("autor", "orgao").order_by("-data", "-numero")
     if q:
-        oficios = oficios.filter(assunto__icontains=q)
-    return render(request, "oficios/_search_results.html", {"oficios": oficios})
+        oficios_qs = oficios_qs.filter(assunto__icontains=q)
+        
+    paginator = Paginator(oficios_qs, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    return render(request, "oficios/_search_results.html", {"page_obj": page_obj})
 
 
 @login_required

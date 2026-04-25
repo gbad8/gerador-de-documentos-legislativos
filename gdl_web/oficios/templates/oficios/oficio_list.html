@@ -11,6 +11,24 @@
     .clickable-row:hover {
         background-color: rgba(0, 0, 0, 0.04) !important;
     }
+
+    /* Paginação cor verde da identidade visual (gdl-green) */
+    .pagination .page-link {
+        color: #02a342; /* Um tom ligeiramente mais escuro para legibilidade no fundo branco */
+    }
+    .pagination .page-link:hover {
+        color: var(--gdl-green-hover);
+        background-color: #e9ecef;
+    }
+    .pagination .page-item.active .page-link {
+        background-color: var(--gdl-green);
+        border-color: var(--gdl-green);
+        color: #1a1a1a;
+        font-weight: 600;
+    }
+    .pagination .page-item.disabled .page-link {
+        color: #6c757d;
+    }
 </style>
 {% endblock %}
 
