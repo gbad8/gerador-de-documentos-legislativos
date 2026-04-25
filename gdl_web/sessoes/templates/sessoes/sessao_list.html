@@ -2,6 +2,28 @@
 
 {% block title %}Sessões Legislativas{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* Paginação cor verde da identidade visual (gdl-green) */
+    .pagination .page-link {
+        color: #02a342; /* Tom mais escuro para legibilidade */
+    }
+    .pagination .page-link:hover {
+        color: var(--gdl-green-hover);
+        background-color: #e9ecef;
+    }
+    .pagination .page-item.active .page-link {
+        background-color: var(--gdl-green);
+        border-color: var(--gdl-green);
+        color: #1a1a1a;
+        font-weight: 600;
+    }
+    .pagination .page-item.disabled .page-link {
+        color: #6c757d;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -27,7 +49,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for sessao in sessoes %}
+                        {% for sessao in page_obj %}
                         <tr>
                             <td class="ps-4 fw-medium text-gdl-blue">{{ sessao.nome_curto }}</td>
                             <td>{{ sessao.legislatura }}</td>
@@ -56,6 +78,37 @@
                     </tbody>
                 </table>
             </div>
+
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Navegação de páginas de sessões" class="mt-4 border-top pt-3">
+                <ul class="pagination justify-content-center mb-1">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                        <li class="page-item active" aria-current="page"><span class="page-link">{{ num }}</span></li>
+                        {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Próxima</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled"><span class="page-link">Próxima</span></li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+
         </div>
     </div>
     

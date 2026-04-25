@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import OrgaoExternoForm
@@ -9,8 +10,12 @@ from .models import OrgaoExterno
 @login_required
 def orgao_externo_list(request):
     """Lista os órgãos externos da câmara do usuário."""
-    orgaos = OrgaoExterno.objects.for_camara(request.camara)
-    return render(request, "orgaos_externos/orgao_externo_list.html", {"orgaos": orgaos})
+    orgaos_qs = OrgaoExterno.objects.for_camara(request.camara).order_by('nome')
+    paginator = Paginator(orgaos_qs, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    return render(request, "orgaos_externos/orgao_externo_list.html", {"page_obj": page_obj})
 
 
 @login_required

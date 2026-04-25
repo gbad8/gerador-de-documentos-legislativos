@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import LegislaturaForm
@@ -9,8 +10,12 @@ from .models import Legislatura
 @login_required
 def legislatura_list(request):
     """Lista as legislaturas da câmara do usuário."""
-    legislaturas = Legislatura.objects.for_camara(request.camara)
-    return render(request, "legislaturas/legislatura_list.html", {"legislaturas": legislaturas})
+    legislaturas_qs = Legislatura.objects.for_camara(request.camara).order_by('-data_inicio')
+    paginator = Paginator(legislaturas_qs, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    return render(request, "legislaturas/legislatura_list.html", {"page_obj": page_obj})
 
 
 @login_required
