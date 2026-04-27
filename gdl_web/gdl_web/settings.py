@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "orgaos",
     "orgaos_externos",
     "oficios",
+    "indicacoes",
     "legislaturas",
     "landing",
     "sessoes",

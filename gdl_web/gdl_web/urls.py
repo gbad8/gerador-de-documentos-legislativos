@@ -25,6 +25,7 @@ urlpatterns = [
     path("", include("landing.urls")),
     path("painel/", login_required(TemplateView.as_view(template_name="home.html")), name="home"),
     path("painel/oficios/", include("oficios.urls")),
+    path("painel/indicacoes/", include("indicacoes.urls")),
     path("painel/configuracoes/", include("core.urls")),
     path("painel/configuracoes/autores/", include("autores.urls")),
     path("painel/configuracoes/legislaturas/", include("legislaturas.urls")),

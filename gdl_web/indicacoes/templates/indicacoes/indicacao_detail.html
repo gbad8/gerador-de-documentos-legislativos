@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Indicação nº {{ indicacao.numero }}{% endblock %}
+
+{% block content %}
+<div class="container py-5 max-w-800">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0 text-gdl-blue">Indicação nº {{ indicacao.numero }}</h2>
+            <span class="text-muted"><i class="bi bi-person me-1"></i>{{ indicacao.autor.nome }}</span>
+        </div>
+        <div>
+            <a href="{% url 'indicacoes:generate_pdf' indicacao.pk %}" target="_blank" class="btn btn-outline-danger shadow-sm me-2">
+                <i class="bi bi-file-earmark-pdf me-1"></i> Imprimir PDF
+            </a>
+            <a href="{% url 'indicacoes:edit' indicacao.pk %}" class="btn btn-outline-primary shadow-sm me-2">
+                <i class="bi bi-pencil me-1"></i> Editar
+            </a>
+            <a href="{% url 'indicacoes:delete' indicacao.pk %}" class="btn btn-outline-secondary shadow-sm me-2">
+                Excluir
+            </a>
+            <a href="{% url 'indicacoes:list' %}" class="btn btn-secondary shadow-sm">Voltar</a>
+        </div>
+    </div>
+
+    <!-- Layout of Indicação Content -->
+    <div class="card p-5 mb-4 shadow-sm border-0" style="min-height: 50vh;">
+        <div class="text-center mb-5">
+            {% if indicacao.camara.logomarca_base64 %}
+                <img src="data:image/png;base64,{{ indicacao.camara.logomarca_base64 }}" alt="Brasão" height="80" class="mb-3">
+            {% endif %}
+            <h4 class="fw-bold mb-1">{{ indicacao.camara.nome }}</h4>
+            <div class="text-muted small">Estado {{ indicacao.camara.preposicao_estado }} {{ indicacao.camara.get_estado_display }}</div>
+        </div>
+
+        <div class="w-100 text-end fw-bold mb-4">
+            INDICAÇÃO Nº {{ indicacao.numero }}
+        </div>
+        
+        <div class="text-end mb-5 w-50 ms-auto">
+            <strong>Ementa:</strong> {{ indicacao.assunto|default:"-" }}
+        </div>
+
+        <div class="content flex-grow-1 text-justify lh-lg mb-5" style="text-indent: 3rem;">
+            Senhor Presidente,<br><br>
+            Na forma regimental, o(a) ilustre vereador(a) infra-assinado <strong>INDICA</strong> {{ indicacao.solicitacao|safe }}
+        </div>
+
+        {% if indicacao.justificativa %}
+        <div class="mb-5">
+            <h5 class="fw-bold text-center mb-3">JUSTIFICATIVA</h5>
+            <div class="text-justify lh-lg" style="text-indent: 3rem;">
+                {{ indicacao.justificativa|safe }}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="text-end mb-5">
+            Sala das Sessões, {{ indicacao.data|date:"d" }} de {{ indicacao.data|date:"F" }} de {{ indicacao.data|date:"Y" }}.
+        </div>
+
+        <div class="text-center mt-5">
+            <p class="mb-0 fw-bold">{{ indicacao.autor.nome }}</p>
+            <p class="text-muted small">{{ indicacao.autor.get_cargo_display }}</p>
+        </div>
+
+        {% if indicacao.e_conjunto %}
+        <div class="mt-4 pt-4 border-top">
+            <h6 class="fw-bold mb-3 text-center">Coautores:</h6>
+            <div class="row">
+                {% for coautor in indicacao.coautores.all %}
+                <div class="col-md-6 text-center mb-4">
+                    <p class="mb-0 fw-bold">{{ coautor.nome }}</p>
+                    <p class="text-muted small">{{ coautor.get_cargo_display }}</p>
+                </div>
+                {% empty %}
+                <div class="col-12 text-muted fst-italic text-center">Nenhum coautor registrado.</div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

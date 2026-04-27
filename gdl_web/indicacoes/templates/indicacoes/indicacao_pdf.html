@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Indicação n° {{ indicacao.numero }}</title>
+    <style>
+        @page { size: A4; margin: 2.5cm 2cm 2.5cm 3cm; }
+        body { font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.5; color: #000; }
+        .text-center { text-align: center; }
+        .text-justify { text-align: justify; }
+        .text-right { text-align: right; }
+        .bold { font-weight: bold; }
+        .mb-1 { margin-bottom: 0.25rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-4 { margin-bottom: 1.5rem; }
+        .mb-5 { margin-bottom: 3rem; }
+        .mt-5 { margin-top: 3rem; }
+        .small { font-size: 10pt; }
+        .w-50 { width: 50%; }
+        .ml-auto { margin-left: auto; }
+        .text-indent { text-indent: 3rem; }
+        .flex-row { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-between; }
+        .flex-item { width: 45%; text-align: center; margin-bottom: 2rem; }
+    </style>
+</head>
+<body>
+    <div class="text-center mb-4">
+        {% if camara.logomarca_base64 %}
+            <img src="data:image/png;base64,{{ camara.logomarca_base64 }}" height="60" alt="Brasão do Município" style="margin-bottom: 10px;">
+        {% endif %}
+        <div class="bold" style="font-size: 14pt;">CÂMARA MUNICIPAL DE {{ camara.cidade|upper }}</div>
+        <div class="small">ESTADO {{ camara.preposicao_estado|upper }} {{ camara.get_estado_display|upper }}</div>
+        <div class="small">{{ camara.endereco }}{% if camara.cep %} - CEP: {{ camara.cep }}{% endif %}</div>
+        {% if camara.telefone or camara.email %}
+            <div class="small">
+                {% if camara.telefone %}Tel: {{ camara.telefone }}{% endif %}
+                {% if camara.telefone and camara.email %} | {% endif %}
+                {% if camara.email %}E-mail: {{ camara.email }}{% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="text-right bold mb-4">INDICAÇÃO Nº {{ indicacao.numero }}</div>
+    
+    <div class="ml-auto w-50 mb-5 text-justify">
+        <span class="bold">Ementa:</span> {{ indicacao.assunto|default:"" }}
+    </div>
+
+    <div class="text-justify text-indent mb-2">
+        Senhor Presidente,
+    </div>
+    
+    <div class="text-justify text-indent mb-4">
+        Na forma regimental, o(a) ilustre vereador(a) infra-assinado <span class="bold">INDICA</span> {{ indicacao.solicitacao|safe }}
+    </div>
+
+    {% if indicacao.justificativa %}
+    <div class="text-center bold mb-2">JUSTIFICATIVA</div>
+    <div class="text-justify text-indent mb-5">
+        {{ indicacao.justificativa|safe }}
+    </div>
+    {% endif %}
+
+    <div class="text-right mb-5 mt-5">
+        Sala das Sessões, {{ indicacao.data|date:"d" }} de {{ indicacao.data|date:"F" }} de {{ indicacao.data|date:"Y" }}.
+    </div>
+
+    <div class="text-center mt-5 mb-5">
+        <div>___________________________________________________</div>
+        <div class="bold">{{ indicacao.autor.nome }}</div>
+        <div class="small">{{ indicacao.autor.get_cargo_display }}</div>
+    </div>
+
+    {% if indicacao.e_conjunto %}
+    <div class="flex-row mt-5">
+        {% for coautor in indicacao.coautores.all %}
+        <div class="flex-item">
+            <div>_____________________________________</div>
+            <div class="bold">{{ coautor.nome }}</div>
+            <div class="small">{{ coautor.get_cargo_display }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</body>
+</html>
