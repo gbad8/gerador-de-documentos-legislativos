@@ -1,86 +1,179 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Indicação n° {{ indicacao.numero }}</title>
+    <meta charset="utf-8">
+    <title>Indicação {{ indicacao.numero }} - Ver. {{ indicacao.autor }}</title>
     <style>
-        @page { size: A4; margin: 2.5cm 2cm 2.5cm 3cm; }
-        body { font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.5; color: #000; }
-        .text-center { text-align: center; }
-        .text-justify { text-align: justify; }
-        .text-right { text-align: right; }
-        .bold { font-weight: bold; }
-        .mb-1 { margin-bottom: 0.25rem; }
-        .mb-2 { margin-bottom: 0.5rem; }
-        .mb-4 { margin-bottom: 1.5rem; }
-        .mb-5 { margin-bottom: 3rem; }
-        .mt-5 { margin-top: 3rem; }
-        .small { font-size: 10pt; }
-        .w-50 { width: 50%; }
-        .ml-auto { margin-left: auto; }
-        .text-indent { text-indent: 3rem; }
-        .flex-row { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-between; }
-        .flex-item { width: 45%; text-align: center; margin-bottom: 2rem; }
+        @page {
+            size: A4;
+            margin: 4.5cm 2.5cm 3cm;
+        }
+
+        body {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 12pt;
+            line-height: 1.3;
+            color: #000;
+        }
+
+        .header {
+            position: fixed;
+            top: -3.5cm;
+            left: 0;
+            right: 0;
+            text-align: center;
+            border-bottom: 1px solid #000;
+            padding-bottom: 0.8cm;
+            height: 3cm;
+        }
+
+        .header h2 {
+            font-size: 10pt;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .header p {
+            font-size: 10pt;
+            margin: 0;
+            color: #555;
+        }
+
+        .indicacao-numero {
+            text-align: left;
+            margin-bottom: 0.5cm;
+        }
+
+        .indicacao-orgao {
+            text-align: right;
+            margin-bottom: 0.5cm;
+            margin-top: 0.5cm;
+        }
+
+        .data-assinatura {
+            text-align: right;
+            margin-bottom: 1cm;
+            font-family: "Times New Roman", Times, serif;
+            font-size: 12pt;
+        }
+
+        .destinatario {
+            margin-bottom: 0.5cm;
+            line-height: 1.15;
+            text-indent: 0cm;
+        }
+
+        .corpo {
+            text-align: justify;
+            margin-bottom: 1cm;
+        }
+        
+        .corpo p {
+            text-indent: 3cm;
+            text-align: justify;
+            margin-top: 0;
+        }
+
+        .assinatura {
+            text-align: center;
+            padding-top: 3cm;
+        }
+
+        .assinatura-primeira {
+            text-align: center;
+            padding-top: 2cm;
+        }
+
+        .assinatura-linha {
+            border-top: 1px solid #000;
+            width: 7cm;
+            margin: 0 auto 0.1cm auto;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: -2.3cm;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 8pt;
+            color: #000;
+            border-top: 1px solid #000;
+            padding-top: 0.3cm;
+        }
     </style>
 </head>
+
 <body>
-    <div class="text-center mb-4">
+    <div class="header">
         {% if camara.logomarca_base64 %}
-            <img src="data:image/png;base64,{{ camara.logomarca_base64 }}" height="60" alt="Brasão do Município" style="margin-bottom: 10px;">
+        <img src="data:image/png;base64,{{ camara.logomarca_base64 }}" style="max-height: 70px; margin-bottom: 10px;" />
         {% endif %}
-        <div class="bold" style="font-size: 14pt;">CÂMARA MUNICIPAL DE {{ camara.cidade|upper }}</div>
-        <div class="small">ESTADO {{ camara.preposicao_estado|upper }} {{ camara.get_estado_display|upper }}</div>
-        <div class="small">{{ camara.endereco }}{% if camara.cep %} - CEP: {{ camara.cep }}{% endif %}</div>
-        {% if camara.telefone or camara.email %}
-            <div class="small">
-                {% if camara.telefone %}Tel: {{ camara.telefone }}{% endif %}
-                {% if camara.telefone and camara.email %} | {% endif %}
-                {% if camara.email %}E-mail: {{ camara.email }}{% endif %}
-            </div>
-        {% endif %}
+        <h2>Estado {{ camara.preposicao_estado }} {{ camara.get_estado_display }}</h2>
+        <h2> PODER LEGISLATIVO</h2>
+        <h2>{{ camara.nome }}</h2>
     </div>
 
-    <div class="text-right bold mb-4">INDICAÇÃO Nº {{ indicacao.numero }}</div>
-    
-    <div class="ml-auto w-50 mb-5 text-justify">
-        <span class="bold">Ementa:</span> {{ indicacao.assunto|default:"" }}
+    {% if indicacao.orgao %}
+    <div class="indicacao-orgao">
+        <strong>{{ indicacao.orgao.nome }}</strong>
+    </div>
+    {% endif %}
+
+    <div class="indicacao-numero">
+        <strong>Indicação nº {{ indicacao.numero }}</strong>
     </div>
 
-    <div class="text-justify text-indent mb-2">
-        Senhor Presidente,
+    <div class="data-assinatura">
+        {{ camara.cidade|default:camara.endereco }}, {{ indicacao.data|date:"d \d\e F \d\e Y"|lower }}.
     </div>
-    
-    <div class="text-justify text-indent mb-4">
-        Na forma regimental, o(a) ilustre vereador(a) infra-assinado <span class="bold">INDICA</span> {{ indicacao.solicitacao|safe }}
+
+    <p style="margin-bottom: 1.5cm;"><strong>ASSUNTO: {{ indicacao.assunto|upper }}</strong></p>
+
+    <div class="destinatario">
+        <p style="text-indent: 3cm;">Senhor Presidente,</p>
+    </div>
+
+    <div class="corpo">
+        <p>Na forma regimental, o(a) ilustre vereador(a) infra-assinado <strong>INDICA</strong> {{ indicacao.solicitacao|safe }}</p>
     </div>
 
     {% if indicacao.justificativa %}
-    <div class="text-center bold mb-2">JUSTIFICATIVA</div>
-    <div class="text-justify text-indent mb-5">
-        {{ indicacao.justificativa|safe }}
+    <div style="text-align: center; margin-bottom: 0.5cm; margin-top: 1cm;">
+        <strong>JUSTIFICATIVA</strong>
+    </div>
+    <div class="corpo">
+        <p>{{ indicacao.justificativa|safe }}</p>
     </div>
     {% endif %}
 
-    <div class="text-right mb-5 mt-5">
-        Sala das Sessões, {{ indicacao.data|date:"d" }} de {{ indicacao.data|date:"F" }} de {{ indicacao.data|date:"Y" }}.
-    </div>
+    <div class="fechamento" style="page-break-inside: avoid;">
+        <p style="margin-bottom: 2cm; text-align: center;">Sala das Sessões,</p>
 
-    <div class="text-center mt-5 mb-5">
-        <div>___________________________________________________</div>
-        <div class="bold">{{ indicacao.autor.nome }}</div>
-        <div class="small">{{ indicacao.autor.get_cargo_display }}</div>
-    </div>
-
-    {% if indicacao.e_conjunto %}
-    <div class="flex-row mt-5">
-        {% for coautor in indicacao.coautores.all %}
-        <div class="flex-item">
-            <div>_____________________________________</div>
-            <div class="bold">{{ coautor.nome }}</div>
-            <div class="small">{{ coautor.get_cargo_display }}</div>
+        {% for autor_indicacao in indicacao.autores_ordenados %}
+        {% if forloop.first %}
+        <div class="assinatura-primeira" style="page-break-inside: avoid;">
+            <div class="assinatura-linha"></div>
+            <strong>{{ autor_indicacao }}</strong><br>
+            <i>{{ autor_indicacao.get_cargo_display }}</i>
         </div>
-        {% endfor %}
+    </div>
+    {% else %}
+    <div class="assinatura" style="page-break-inside: avoid;">
+        <div class="assinatura-linha"></div>
+        <strong>{{ autor_indicacao }}</strong><br>
+        <i>{{ autor_indicacao.get_cargo_display }}</i>
     </div>
     {% endif %}
+    {% endfor %}
+
+    <div class="footer">
+        {{ camara.nome }}{% if camara.cnpj %} — CNPJ: {{ camara.cnpj }}{% endif %}<br>
+        {{ camara.endereco|default:"" }}{% if camara.cep %} — CEP: {{ camara.cep }}{% endif %}
+        {% if camara.telefone %} — Tel: {{ camara.telefone }}{% endif %}
+        {% if camara.email %} — E-mail: {{ camara.email }}{% endif %}
+    </div>
 </body>
+
 </html>
