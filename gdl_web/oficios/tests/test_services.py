@@ -4,7 +4,8 @@ import pytest
 from datetime import date
 from unittest.mock import patch
 
-from oficios.models import Numeracao, Oficio
+from core.models import Numeracao
+from oficios.models import Oficio
 from oficios.services import NumeracaoService, PdfService
 
 

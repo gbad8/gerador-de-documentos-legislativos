@@ -2,12 +2,12 @@ from django.db import transaction
 from django.template.loader import render_to_string
 from django.utils import timezone
 
-from oficios.models import Numeracao
+from core.models import Numeracao
 
 
 class NumeracaoService:
     @staticmethod
-    def proximo_numero(camara, orgao, autor):
+    def proximo_numero(camara, orgao, autor, tipo_documento=Numeracao.TipoDocumento.OFICIO):
         ano = timezone.now().year
 
         with transaction.atomic():
@@ -16,6 +16,7 @@ class NumeracaoService:
                 orgao=orgao,
                 autor=autor,
                 ano=ano,
+                tipo_documento=tipo_documento,
                 defaults={"ultimo_numero": 0},
             )
             numeracao.ultimo_numero += 1
@@ -24,7 +25,7 @@ class NumeracaoService:
         return f"{numeracao.ultimo_numero:03d}/{ano}"
 
     @staticmethod
-    def registrar_numero_manual(camara, orgao, autor, numero):
+    def registrar_numero_manual(camara, orgao, autor, numero, tipo_documento=Numeracao.TipoDocumento.OFICIO):
         """Registra um número manual inserido pelo usuário.
 
         Valida que o número é maior que o ultimo_numero atual.
@@ -38,6 +39,7 @@ class NumeracaoService:
                 orgao=orgao,
                 autor=autor,
                 ano=ano,
+                tipo_documento=tipo_documento,
                 defaults={"ultimo_numero": 0},
             )
 
