@@ -104,3 +104,89 @@ class UsuarioPerfil(models.Model):
 
     def __str__(self):
         return self.nome
+
+
+class DocumentoStatus(models.TextChoices):
+    RASCUNHO = "rascunho"
+    FINALIZADO = "finalizado"
+    MODIFICADO = "modificado"
+
+
+class DocumentoLegislativoBase(models.Model):
+    camara = models.ForeignKey(Camara, on_delete=models.CASCADE)
+    orgao = models.ForeignKey("orgaos.Orgao", on_delete=models.PROTECT, null=True, blank=True)
+    autor = models.ForeignKey("autores.Autor", on_delete=models.PROTECT)
+    numero = models.CharField(max_length=10)
+    data = models.DateField()
+    status = models.CharField(
+        max_length=20,
+        choices=DocumentoStatus.choices,
+        default=DocumentoStatus.RASCUNHO,
+    )
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    objects = TenantManager()
+
+    class Meta:
+        abstract = True
+        ordering = ["-criado_em"]
+        indexes = [
+            models.Index(fields=["camara", "-criado_em"]),
+            models.Index(fields=["camara", "orgao"]),
+            models.Index(fields=["camara", "autor"]),
+            models.Index(fields=["camara", "status"]),
+        ]
+
+    def _campos_completos(self):
+        """Método a ser sobrescrito nas classes filhas"""
+        return False
+
+    def calcular_status(self):
+        """Calcula o status do documento automaticamente."""
+        if not self._campos_completos():
+            return DocumentoStatus.RASCUNHO
+
+        if self.pk and self.status == DocumentoStatus.FINALIZADO:
+            return DocumentoStatus.MODIFICADO
+
+        if self.status == DocumentoStatus.MODIFICADO:
+            return DocumentoStatus.MODIFICADO
+
+        return DocumentoStatus.FINALIZADO
+
+    def save(self, *args, **kwargs):
+        self.status = self.calcular_status()
+        super().save(*args, **kwargs)
+
+
+class Numeracao(models.Model):
+    class TipoDocumento(models.TextChoices):
+        OFICIO = "oficio", "Ofício"
+        INDICACAO = "indicacao", "Indicação"
+        REQUERIMENTO = "requerimento", "Requerimento"
+        PROJETO_LEI = "projeto_lei", "Projeto de Lei"
+        PARECER = "parecer", "Parecer"
+        PORTARIA = "portaria", "Portaria"
+
+    tipo_documento = models.CharField(
+        max_length=20, 
+        choices=TipoDocumento.choices, 
+        default=TipoDocumento.OFICIO
+    )
+    camara = models.ForeignKey(Camara, on_delete=models.CASCADE)
+    orgao = models.ForeignKey("orgaos.Orgao", on_delete=models.CASCADE, null=True, blank=True)
+    autor = models.ForeignKey("autores.Autor", on_delete=models.CASCADE)
+    ano = models.IntegerField()
+    ultimo_numero = models.IntegerField(default=0)
+
+    objects = TenantManager()
+
+    class Meta:
+        db_table = "oficios_numeracao"  # Mantém a tabela atual de numeração do Ofício
+        unique_together = ("camara", "orgao", "autor", "ano", "tipo_documento")
+        verbose_name = "Numeração"
+        verbose_name_plural = "Numerações"
+
+    def __str__(self):
+        return f"{self.get_tipo_documento_display()} - {self.orgao} / {self.autor} — {self.ano}: {self.ultimo_numero}"

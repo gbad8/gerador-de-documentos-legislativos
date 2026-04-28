@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}{{ form.instance.pk|yesno:"Editar,Nova" }} Indicação{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card-painel p-4 p-md-5 mb-4">
+    <form method="post">
+        {% csrf_token %}
+
+        <h3 class="fw-bold mb-4 text-gdl-blue">{{ form.instance.pk|yesno:"Editar Indicação,Nova Indicação" }}</h3>
+
+        {# ── Número + Data ── #}
+        <div class="row g-3 align-items-center mb-3">
+            {% if form.instance.pk %}
+            <div class="col-auto">
+                <label class="col-form-label">Número da Indicação:</label>
+            </div>
+            <div class="col-auto">
+                <input type="text" class="form-control" value="{{ form.instance.numero }}" disabled>
+            </div>
+            {% else %}
+            {% if form.numero_manual.errors %}
+            <div class="col-12">
+                <div class="alert alert-danger mb-0" role="alert">
+                    {{ form.numero_manual.errors.0 }}
+                </div>
+            </div>
+            {% endif %}
+            <div class="col-auto">
+                <label class="col-form-label fw-medium">Numeração:</label>
+            </div>
+            {% for radio in form.tipo_numeracao %}
+            <div class="col-auto">
+                <div class="form-check form-check-inline">
+                    {{ radio.tag }}
+                    <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                </div>
+            </div>
+            {% endfor %}
+            <div id="numero-manual-container" class="col-auto" {% if not form.numero_manual.errors and form.tipo_numeracao.value != "manual" %}style="display: none;"{% endif %}>
+                <label for="{{ form.numero_manual.id_for_label }}" class="visually-hidden">Número da Indicação</label>
+                {{ form.numero_manual }}
+            </div>
+            {% endif %}
+            <div class="col-auto">
+                <label for="{{ form.data.id_for_label }}" class="col-form-label">Data:</label>
+            </div>
+            <div class="col-auto">
+                {{ form.data }}
+            </div>
+            {% if form.data.errors %}
+            <div class="col-12 text-danger small">{{ form.data.errors }}</div>
+            {% endif %}
+        </div>
+
+        {# ── Assunto ── #}
+        <div class="mb-3">
+            <label for="{{ form.assunto.id_for_label }}" class="form-label">Assunto:</label>
+            {{ form.assunto }}
+            {% if form.assunto.errors %}<div class="text-danger small">{{ form.assunto.errors }}</div>{% endif %}
+        </div>
+
+        {# ── Órgão + Autor ── #}
+        <div class="row g-3 mb-3">
+            <div class="col-md-6">
+                <label for="{{ form.orgao.id_for_label }}" class="form-label">Órgão Emissor:</label>
+                {{ form.orgao }}
+                {% if form.orgao.errors %}<div class="text-danger small">{{ form.orgao.errors }}</div>{% endif %}
+            </div>
+            <div class="col-md-6">
+                <label for="{{ form.autor.id_for_label }}" class="form-label">Autor Principal:</label>
+                {{ form.autor }}
+                {% if form.autor.errors %}<div class="text-danger small">{{ form.autor.errors }}</div>{% endif %}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="form-check form-switch">
+                    {{ form.e_conjunto }}
+                    <label class="form-check-label" for="{{ form.e_conjunto.id_for_label }}">Indicação Conjunta</label>
+                </div>
+            </div>
+        </div>
+
+        <div id="coautores-container" class="mb-3" style="display: none;">
+            <label for="{{ form.coautores.id_for_label }}" class="form-label">Coautores:</label>
+            {{ form.coautores }}
+            {% if form.coautores.errors %}<div class="text-danger small">{{ form.coautores.errors }}</div>{% endif %}
+        </div>
+
+        {# ── Solicitação ── #}
+        <div class="mb-3 mt-4">
+            <label for="{{ form.solicitacao.id_for_label }}" class="form-label fw-bold">Texto da Solicitação:</label>
+            {{ form.solicitacao }}
+            {% if form.solicitacao.errors %}<div class="text-danger small">{{ form.solicitacao.errors }}</div>{% endif %}
+        </div>
+        
+        {# ── Justificativa ── #}
+        <div class="mb-3 mt-3">
+            <label for="{{ form.justificativa.id_for_label }}" class="form-label fw-bold">Texto da Justificativa:</label>
+            {{ form.justificativa }}
+            {% if form.justificativa.errors %}<div class="text-danger small">{{ form.justificativa.errors }}</div>{% endif %}
+        </div>
+
+        <div class="col-12 mt-4">
+            <button class="btn btn-primary rounded-pill px-4 shadow-sm" type="submit">
+                {{ form.instance.pk|yesno:"Salvar Alterações,Gerar Indicação" }}
+            </button>
+            <a href="{% if form.instance.pk %}{% url 'indicacoes:preview' form.instance.pk %}{% else %}{% url 'indicacoes:list' %}{% endif %}" class="btn btn-outline-secondary rounded-pill px-4 ms-2">Cancelar</a>
+        </div>
+    </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Toggle coautores
+        const switchConjunto = document.getElementById('{{ form.e_conjunto.id_for_label }}');
+        const containerCoautores = document.getElementById('coautores-container');
+
+        function toggleCoautores() {
+            if (switchConjunto.checked) {
+                containerCoautores.style.display = 'block';
+            } else {
+                containerCoautores.style.display = 'none';
+            }
+        }
+
+        if (switchConjunto && containerCoautores) {
+            switchConjunto.addEventListener('change', toggleCoautores);
+            toggleCoautores();
+        }
+
+        // Toggle número manual
+        const containerNumeroManual = document.getElementById('numero-manual-container');
+        const radiosNumeracao = document.querySelectorAll('input[name="tipo_numeracao"]');
+
+        function toggleNumeroManual() {
+            if (!containerNumeroManual) return;
+            const selected = document.querySelector('input[name="tipo_numeracao"]:checked');
+            if (selected && selected.value === 'manual') {
+                containerNumeroManual.style.display = 'block';
+            } else {
+                containerNumeroManual.style.display = 'none';
+            }
+        }
+
+        radiosNumeracao.forEach(function(radio) {
+            radio.addEventListener('change', toggleNumeroManual);
+        });
+        toggleNumeroManual();
+    });
+</script>
+{% endblock %}

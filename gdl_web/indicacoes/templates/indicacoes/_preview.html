@@ -1,0 +1,56 @@
+<div class="card-painel mb-4">
+    <div class="card-body p-4 p-md-5">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <strong>Número:</strong> {{ indicacao.numero }}
+            </div>
+            <div class="col-md-6">
+                <strong>Data:</strong> {{ indicacao.data|date:"d/m/Y" }}
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <strong>Autor Principal:</strong> {{ indicacao.autor }}
+                {% if indicacao.e_conjunto %}
+                <br><strong>Coautores:</strong> 
+                {% for coautor in indicacao.coautores.all %}
+                    {{ coautor }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                <strong class="text-gdl-blue">Status:</strong>
+                <span class="badge {% if indicacao.status == 'finalizado' %}bg-success bg-opacity-10 text-success{% elif indicacao.status == 'modificado' %}bg-warning bg-opacity-10 text-warning{% else %}bg-secondary bg-opacity-10 text-secondary{% endif %} rounded-pill px-3 py-2 ms-2">
+                    {{ indicacao.get_status_display }}
+                </span>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <strong>Órgão Emissor:</strong> {{ indicacao.orgao|default:"-" }}
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="row mb-3">
+            <div class="col">
+                <strong>Assunto:</strong> {{ indicacao.assunto }}
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="mb-3">
+            <strong>Solicitação:</strong>
+            <div class="mt-2 p-3 bg-light border rounded" style="text-align: justify;">{{ indicacao.solicitacao|linebreaks }}</div>
+        </div>
+
+        {% if indicacao.justificativa %}
+        <div class="mb-3">
+            <strong>Justificativa:</strong>
+            <div class="mt-2 p-3 bg-light border rounded" style="text-align: justify;">{{ indicacao.justificativa|linebreaks }}</div>
+        </div>
+        {% endif %}
+    </div>
+</div>
