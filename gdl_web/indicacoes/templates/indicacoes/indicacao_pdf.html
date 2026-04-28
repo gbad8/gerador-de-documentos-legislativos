@@ -66,23 +66,35 @@
 
         .corpo {
             text-align: justify;
-            margin-bottom: 1cm;
+            margin-bottom: 0.5cm;
         }
-        
+
+        .solicitacao {
+            text-align: justify;
+            margin-bottom: 0.5cm;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .solicitacao p {
+            margin-top: 0;
+        }
+
+
         .corpo p {
-            text-indent: 3cm;
+            text-indent: 0cm;
             text-align: justify;
             margin-top: 0;
         }
 
         .assinatura {
             text-align: center;
-            padding-top: 3cm;
+            padding-top: 1cm;
         }
 
         .assinatura-primeira {
             text-align: center;
-            padding-top: 2cm;
+            padding-top: 1cm;
         }
 
         .assinatura-linha {
@@ -129,27 +141,32 @@
         {{ camara.cidade|default:camara.endereco }}, {{ indicacao.data|date:"d \d\e F \d\e Y"|lower }}.
     </div>
 
-    <p style="margin-bottom: 1.5cm;"><strong>ASSUNTO: {{ indicacao.assunto|upper }}</strong></p>
+    <p style="margin-bottom: 0.5cm; text-align: justify;"><strong>AUTORIA DE {{ indicacao.autor|upper }}</strong></p>
+    <p style="margin-bottom: 0.5cm; text-align: justify;"><strong>ASSUNTO: {{ indicacao.assunto|upper }}</strong></p>
 
     <div class="destinatario">
-        <p style="text-indent: 3cm;">Senhor Presidente,</p>
+        <p>Ao Exmo. Senhor {{ presidente.nome|default:"[NOME DO PRESIDENTE]" }},</p>
     </div>
 
     <div class="corpo">
-        <p>Na forma regimental, o(a) ilustre vereador(a) infra-assinado <strong>INDICA</strong> {{ indicacao.solicitacao|safe }}</p>
+        <p>Em concordância ao Regimento Interno da Câmara Municipal de Vereadores de Vila Nova dos Martírios (Art. 140)
+            e por ser um legítimo representante do povo desta municipalidade, faço a seguinte indicação para leitura,
+            discussão e votação em Plenário:</p>
+    </div>
+
+    <div class="solicitacao">
+        <p><strong>SOLICITAÇÃO:</strong> {{ indicacao.solicitacao|safe }}</p>
     </div>
 
     {% if indicacao.justificativa %}
-    <div style="text-align: center; margin-bottom: 0.5cm; margin-top: 1cm;">
-        <strong>JUSTIFICATIVA</strong>
-    </div>
-    <div class="corpo">
-        <p>{{ indicacao.justificativa|safe }}</p>
+    <div class="corpo" style="margin-top: 1cm;">
+        <p><strong>JUSTIFICATIVA:</strong> {{ indicacao.justificativa|safe }}</p>
     </div>
     {% endif %}
 
     <div class="fechamento" style="page-break-inside: avoid;">
-        <p style="margin-bottom: 2cm; text-align: center;">Sala das Sessões,</p>
+        <p style="margin-bottom: 1cm; text-align: justify; font-weight: bold;">Sala das Sessões da {{ camara.nome }} - {{ camara.estado }},
+            {{ indicacao.data|date:"d \d\e F \d\e Y"|lower }}.</p>
 
         {% for autor_indicacao in indicacao.autores_ordenados %}
         {% if forloop.first %}
