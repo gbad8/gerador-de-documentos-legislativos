@@ -3,36 +3,30 @@
         <table class="table table-hover align-middle">
             <thead class="table-light">
                 <tr>
-                    <th scope="col" style="width: 15%">Data</th>
-                    <th scope="col" style="width: 15%">Número</th>
-                    <th scope="col" style="width: 20%">Autor</th>
-                    <th scope="col" style="width: 35%">Assunto</th>
-                    <th scope="col" style="width: 15%">Status</th>
+                    <th scope="col">Número</th>
+                    <th scope="col">Autor</th>
+                    <th scope="col">Assunto</th>
+                    <th scope="col">Data</th>
+                    <th scope="col">Status</th>
                 </tr>
             </thead>
             <tbody>
             {% for indicacao in page_obj.object_list %}
                 <tr class="clickable-row" data-href="{% url 'indicacoes:preview' indicacao.pk %}">
-                    <td>{{ indicacao.data|date:"d/m/Y" }}</td>
-                    <td><span class="badge bg-secondary">nº {{ indicacao.numero }}</span></td>
+                    <td><span class="fw-medium text-gdl-blue">{{ indicacao.numero }}</span></td>
                     <td>{{ indicacao.autor.nome }}</td>
-                    <td class="text-truncate" style="max-width: 250px;">
+                    <td>
                         {% if indicacao.assunto %}
                             {{ indicacao.assunto }}
                         {% else %}
                             <span class="text-muted fst-italic">Sem assunto definido</span>
                         {% endif %}
                     </td>
+                    <td>{{ indicacao.data|date:"d/m/Y" }}</td>
                     <td>
-                        {% if indicacao.status == 'rascunho' %}
-                            <span class="badge bg-warning text-dark"><i class="bi bi-pencil-square me-1"></i>Rascunho</span>
-                        {% elif indicacao.status == 'finalizado' %}
-                            <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Finalizado</span>
-                        {% elif indicacao.status == 'modificado' %}
-                            <span class="badge bg-info text-dark"><i class="bi bi-arrow-repeat me-1"></i>Modificado</span>
-                        {% else %}
-                            <span class="badge bg-secondary">{{ indicacao.get_status_display }}</span>
-                        {% endif %}
+                        <span class="badge {% if indicacao.status == 'finalizado' %}bg-success bg-opacity-10 text-success{% elif indicacao.status == 'rascunho' %}bg-secondary bg-opacity-10 text-secondary{% elif indicacao.status == 'modificado' %}bg-warning bg-opacity-10 text-warning{% else %}bg-secondary bg-opacity-10 text-secondary{% endif %} rounded-pill px-3 py-2">
+                            {{ indicacao.get_status_display }}
+                        </span>
                     </td>
                 </tr>
             {% endfor %}
