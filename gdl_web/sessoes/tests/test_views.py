@@ -17,7 +17,7 @@ class TestSessaoViews:
         url = reverse("sessao_list")
         response = user_logado.get(url)
         assert response.status_code == 200
-        assert sessao in response.context["sessoes"]
+        assert sessao in response.context["page_obj"].object_list
 
     def test_create_view_get(self, user_logado):
         url = reverse("sessao_create")

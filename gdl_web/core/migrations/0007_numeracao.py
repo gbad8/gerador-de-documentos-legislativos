@@ -10,6 +10,7 @@ class Migration(migrations.Migration):
         ('autores', '0002_alter_autor_options_alter_autor_cargo_and_more'),
         ('core', '0006_camara_email'),
         ('orgaos', '0002_orgao_abreviatura'),
+        ('oficios', '0003_alter_numeracao_unique_together_numeracao_orgao_and_more'),  # Ensure oficios.Numeracao exists with orgao field
     ]
 
     operations = [
@@ -37,24 +38,40 @@ class Migration(migrations.Migration):
             database_operations=[
                 migrations.RunSQL(
                     sql="""
-                    ALTER TABLE oficios_numeracao ADD COLUMN IF NOT EXISTS tipo_documento varchar(20) DEFAULT 'oficio' NOT NULL;
-                    
+                    -- Only modify table if it exists
                     DO $$ 
                     DECLARE 
                         constraint_name_val text;
                     BEGIN
-                        SELECT conname INTO constraint_name_val
-                        FROM pg_constraint
-                        WHERE conrelid = 'oficios_numeracao'::regclass
-                        AND contype = 'u' LIMIT 1;
-                        
-                        IF constraint_name_val IS NOT NULL THEN
-                            EXECUTE 'ALTER TABLE oficios_numeracao DROP CONSTRAINT ' || constraint_name_val;
+                        IF EXISTS (
+                            SELECT 1 FROM information_schema.tables 
+                            WHERE table_name = 'oficios_numeracao'
+                        ) THEN
+                            -- Add tipo_documento column if it doesn't exist
+                            IF NOT EXISTS (
+                                SELECT 1 FROM information_schema.columns 
+                                WHERE table_name = 'oficios_numeracao' 
+                                AND column_name = 'tipo_documento'
+                            ) THEN
+                                ALTER TABLE oficios_numeracao ADD COLUMN tipo_documento varchar(20) DEFAULT 'oficio' NOT NULL;
+                            END IF;
+                            
+                            -- Drop old unique constraint if it exists
+                            SELECT conname INTO constraint_name_val
+                            FROM pg_constraint
+                            WHERE conrelid = 'oficios_numeracao'::regclass
+                            AND contype = 'u' LIMIT 1;
+                            
+                            IF constraint_name_val IS NOT NULL THEN
+                                EXECUTE 'ALTER TABLE oficios_numeracao DROP CONSTRAINT ' || constraint_name_val;
+                            END IF;
+                            
+                            -- Add new unique constraint with tipo_documento
+                            ALTER TABLE oficios_numeracao ADD CONSTRAINT oficios_numeracao_uniq_doc UNIQUE NULLS NOT DISTINCT (camara_id, orgao_id, autor_id, ano, tipo_documento);
                         END IF;
                     END $$;
-                    
-                    ALTER TABLE oficios_numeracao ADD CONSTRAINT oficios_numeracao_uniq_doc UNIQUE NULLS NOT DISTINCT (camara_id, orgao_id, autor_id, ano, tipo_documento);
-                    """
+                    """,
+                    reverse_sql="",
                 ),
             ]
         ),

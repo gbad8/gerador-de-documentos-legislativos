@@ -20,6 +20,7 @@ class TestOficioForm:
             "destinatario_orgao": "Prefeitura Municipal",
             "destinatario_endereco": "Rua Central, 1",
             "destinatario_pronome": "Excelentíssimo",
+            "selecao_destino": "manual",
         }
 
     def test_form_valido(self, camara, dados_validos):

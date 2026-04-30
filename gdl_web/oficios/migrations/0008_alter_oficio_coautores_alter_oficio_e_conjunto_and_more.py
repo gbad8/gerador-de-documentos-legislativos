@@ -8,6 +8,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('autores', '0002_alter_autor_options_alter_autor_cargo_and_more'),
         ('oficios', '0007_oficio_tipo_alter_oficio_assunto_alter_oficio_corpo_and_more'),
+        ('core', '0007_numeracao'),  # Ensures Numeracao is created in core BEFORE deletion from oficios state
     ]
 
     operations = [
@@ -27,6 +28,6 @@ class Migration(migrations.Migration):
                     name='Numeracao',
                 ),
             ],
-            database_operations=[]
+            database_operations=[]  # Don't delete the table - it will be used by core.Numeracao
         ),
     ]

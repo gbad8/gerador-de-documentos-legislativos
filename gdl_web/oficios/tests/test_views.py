@@ -31,6 +31,7 @@ def dados_post(autor):
         "destinatario_orgao": "Prefeitura",
         "destinatario_endereco": "Rua Y, 456",
         "destinatario_pronome": "Excelentíssimo",
+        "selecao_destino": "manual",
     }
 
 
